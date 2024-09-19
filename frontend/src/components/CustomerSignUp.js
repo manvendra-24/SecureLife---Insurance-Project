@@ -7,7 +7,7 @@ import { getAllCitiesList } from '../services/AgentService';
 import Header from './layout/Header';
 import Footer from './layout/Footer';
 import NewToast, { showToast } from '../sharedComponents/NewToast';
-import { required, isEmail, isAlphaWithSpace, checkSize, isAlphaNumNoSpace, onlyPositive } from '../utils/helpers/Validation';
+import { required, isEmail, isAlphaWithSpace, checkSize, isAlphaNumNoSpace, onlyPositive, isFutureDate, isTenDigits, isAlphanumeric16 } from '../utils/helpers/Validation';
 import BackButton from '../sharedComponents/BackButton';
 
 const CustomerSignUp = () => {
@@ -50,34 +50,33 @@ const CustomerSignUp = () => {
 
   const validateForm = () => {
     const newErrors = {};
-  
+
     newErrors.name = required(customerDetails.name) || isAlphaWithSpace(customerDetails.name);
-    newErrors.dob = required(customerDetails.dob);
+    newErrors.dob = required(customerDetails.dob) || isFutureDate(customerDetails.dob);
     newErrors.address = required(customerDetails.address);
-    newErrors.phoneNumber = required(customerDetails.phoneNumber) || onlyPositive(customerDetails.phoneNumber);
-    newErrors.bankAccountDetails = required(customerDetails.bankAccountDetails);
+    newErrors.phoneNumber = required(customerDetails.phoneNumber) || isTenDigits(customerDetails.phoneNumber);
+    newErrors.bankAccountDetails = required(customerDetails.bankAccountDetails) || isAlphanumeric16(customerDetails.bankAccountDetails);
     newErrors.cityId = required(customerDetails.cityId);
     newErrors.username = required(customerDetails.username) || isAlphaNumNoSpace(customerDetails.username);
     newErrors.email = required(customerDetails.email) || isEmail(customerDetails.email);
     newErrors.password = required(customerDetails.password) || checkSize(customerDetails.password, 6, 20);
-  
+
     setErrors(newErrors);
-  
+
     return Object.values(newErrors).every((error) => error === undefined || error === "");
   };
-  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-     if (validateForm()) {
+    if (validateForm()) {
       try {
         await registerCustomer(customerDetails);
         showToast('Registered successfully!', 'success');
-        navigate('/login');
+        setTimeout(() => { navigate('/SecureLife.com/login') }, 500);
       } catch (error) {
         showToast(error.specificMessage || 'Registration failed', 'error');
       }
-    }    else {
+    } else {
       showToast('Please correct the errors in the form.', 'error');
     }
   };
@@ -257,7 +256,7 @@ const CustomerSignUp = () => {
                   </Row>
 
                   <Row className="mt-3">
-                    <Col md={6} >
+                    <Col md={6}>
                       <Button type="submit" variant="primary" className="align-items-center justify-content-center">
                         Sign Up
                       </Button>

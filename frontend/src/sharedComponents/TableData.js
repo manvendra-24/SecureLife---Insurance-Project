@@ -77,7 +77,7 @@ const TableData = ({
         variant="primary" 
         className="mx-1" 
         onClick={() => onClaim(row.policyId)}
-        disabled={row.status === "APPROVED_WITHDRAWAL" || row.status === "COMPLETED_TERM"||  row.status === "APPROVED_CLAIM"}
+        disabled={row.status === "CANCELLED" || row.status === "EXPIRED"||  row.status === "CLAIMED"}
       >
         Claim
       </Button>
@@ -87,7 +87,7 @@ const TableData = ({
         variant="warning" 
         className="mx-1" 
         onClick={() => onWithdraw(row.policyId)}
-        disabled={row.status === "APPROVED_WITHDRAWAL" || row.status === "COMPLETED_TERM"}
+        disabled={row.status === "CANCELLED" || row.status === "EXPIRED"}
       >
         Withdraw
       </Button>
@@ -97,7 +97,7 @@ const TableData = ({
         variant="success" 
         className="mx-1" 
         onClick={() => onInstallment(row.policyId)}
-        disabled={row.status === "APPROVED_WITHDRAWAL" || row.status === "COMPLETED_TERM"}
+        disabled={row.status === "CANCELLED" || row.status === "EXPIRED"}
       >
         Installment
       </Button>
@@ -107,7 +107,7 @@ const TableData = ({
 
             {isViewInstallmentTable && (
               <Row>
-                {row.transactionStatus === 'succeeded' ? (
+                {row.transactionStatus === 'SUCCESSFUL' ? (
                   <td>
                     <Button
                       variant="success"

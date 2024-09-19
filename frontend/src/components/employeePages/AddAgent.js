@@ -8,6 +8,7 @@ import { ToastContainer } from 'react-toastify';
 import BackButton from '../../sharedComponents/BackButton';
 import Header from '../layout/Header';
 import Footer from '../layout/Footer';
+import Loader from '../../sharedComponents/Loader';
 
 const AddAgentForm = () => {
   const [formData, setFormData] = useState({
@@ -64,12 +65,13 @@ const AddAgentForm = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   return (
-    <Container fluid className="mt-5 d-flex flex-column">
-      <Header/>
+    <Container fluid className="d-flex flex-column min-vh-100 px-0">
+      <Header />
+      <Container fluid className="py-5 px-5" style={{ backgroundColor: 'rgba(230, 242, 255, 0.4)' }}>
       <Row className="justify-content-center">
         <Col xs={12} md={8}>
           <h2 className="text-center">Add New Agent</h2>
@@ -163,8 +165,10 @@ const AddAgentForm = () => {
           </Form>
         </Col>
       </Row>
+      </Container>
       <Footer/>
       <ToastContainer />
+
     </Container>
   );
 };

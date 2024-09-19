@@ -15,7 +15,7 @@ import CalculateAmountModal from './CalculateAmountModal';
 import PaymentProcessModal from './PaymentProcessModal';
 import BackButton from '../../sharedComponents/BackButton';
 
-const stripePromise = loadStripe('pk_test_51PvdKL2NU6rbBnm1jk4JxyiyT2PbF3CWvlAAjrFscZhwSAdUd01zmHgxeEonuaYSOdGtVmXr84oBUui6Jq2S1W5p00PIroyxe1');
+const stripePromise = loadStripe('pk_test_51PxnhZIMMUt7oFmk9fPzRW3WijElkhKdkkNdofCQmwn5pgiAzNsTWsimV83dqocGpohxP7U4pN75tQkB3Dusz1BI00zSLWpsyv');
 
 
 const ViewInstallmentTable = () => {
@@ -214,6 +214,7 @@ return (
               handleClose={() => setShowCalculateModal(false)}
               installmentAmount={selectedInstallment}
               onProceed={handleProceedToPayment}
+              policy_id = {policyId}
             />
             <PaymentProcessModal
               show={showPaymentModal}

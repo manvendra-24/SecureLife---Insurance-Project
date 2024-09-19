@@ -1,25 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
+import { FaFileAlt, FaQuestionCircle, FaUpload, FaShieldAlt } from 'react-icons/fa'; // Importing icons
 
-import CustomerHeader from '../layout/CustomerHeader'; 
+import CustomerHeader from '../layout/CustomerHeader';
 import Footer from '../layout/Footer';
 
 import DashboardCard from '../../sharedComponents/DashboardCard';
 import Loader from '../../sharedComponents/Loader';
-import NewToast from '../../sharedComponents/NewToast'; 
-import QueryModal from './CustomerQueryForm'; 
-import DocumentUploadModal from './DocumentUploadModal'; 
+import NewToast from '../../sharedComponents/NewToast';
+import QueryModal from './CustomerQueryForm';
+import DocumentUploadModal from './DocumentUploadModal';
 import { successToast, errorToast } from '../../sharedComponents/MyToast';
-import { verifyCustomer, getProfile } from '../../services/AuthService'; 
+import { verifyCustomer, getProfile } from '../../services/AuthService';
 
 const CustomerDashboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [isCustomer, setIsCustomer] = useState(false);
-  const [customerName, setCustomerName] = useState('');
-  const [showQueryModal, setShowQueryModal] = useState(false); 
-  const [showUploadModal, setShowUploadModal] = useState(false); 
+  const [username, setUsername] = useState('');
+  const [showQueryModal, setShowQueryModal] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   useEffect(() => {
     const checkCustomerStatus = async () => {
@@ -35,7 +36,7 @@ const CustomerDashboard = () => {
           }, 1000);
         }
       } catch (error) {
-        errorToast('Internal Server Error', 'error');
+        errorToast(error.specificMessage, 'error');
         setTimeout(() => {
           navigate('/SecureLife.com/login');
         }, 1000);
@@ -47,7 +48,7 @@ const CustomerDashboard = () => {
     const fetchProfileData = async () => {
       try {
         const profileData = await getProfile();
-        setCustomerName(profileData.name);
+        setUsername(profileData.username);
       } catch (error) {
         errorToast('Failed to load profile', 'error');
       }
@@ -68,11 +69,11 @@ const CustomerDashboard = () => {
   };
 
   const handleWriteQuery = () => {
-    setShowQueryModal(true); 
+    setShowQueryModal(true);
   };
 
   const handleCloseQueryModal = () => {
-    setShowQueryModal(false); 
+    setShowQueryModal(false);
   };
 
   const handleViewAllQueries = () => {
@@ -80,21 +81,21 @@ const CustomerDashboard = () => {
   };
 
   const handleShowUploadModal = () => {
-    setShowUploadModal(true); 
+    setShowUploadModal(true);
   };
 
   const handleCloseUploadModal = () => {
-    setShowUploadModal(false); 
+    setShowUploadModal(false);
   };
 
   return (
     <Container fluid className="d-flex flex-column min-vh-100 px-0">
-      <CustomerHeader /> 
+      <CustomerHeader />
       <Container fluid className="py-5 px-5" style={{ backgroundColor: 'rgba(230, 242, 255, 0.5)' }}>
         <Row className="px-5 mb-5">
-          <Col xs={12} md={6}>
-            <div className="text-center">
-              <h1 className="display-4">Welcome, {customerName}!</h1>
+          <Col xs={12} md={12}>
+            <div className="text-left">
+              <h1 className="display-4">Welcome, {username}!</h1>
               <p className="lead">Your dashboard for managing your profile and services.</p>
             </div>
           </Col>
@@ -102,6 +103,7 @@ const CustomerDashboard = () => {
         <Row className="px-5">
           <Col md={4}>
             <DashboardCard
+              icon={<FaShieldAlt />}
               title="View Policy"
               text="View and manage your policies"
               handleButton={handleGetPolicy}
@@ -110,25 +112,30 @@ const CustomerDashboard = () => {
           </Col>
           <Col md={4}>
             <DashboardCard
+              icon={<FaQuestionCircle />}
               title="Write Query"
               text="Submit a query for support"
-              handleButton={handleWriteQuery} 
+              handleButton={handleWriteQuery}
               buttonText="Write Query"
             />
           </Col>
           <Col md={4}>
             <DashboardCard
+              icon={<FaFileAlt />} 
               title="View All Queries"
               text="View all customer queries and responses"
               handleButton={handleViewAllQueries}
               buttonText="View All Queries"
             />
           </Col>
+        </Row>
+        <Row className="mt-3 px-5">
           <Col md={4}>
             <DashboardCard
+              icon={<FaUpload />} 
               title="Upload Documents"
               text="Upload important documents like Aadhaar and PAN"
-              handleButton={handleShowUploadModal} 
+              handleButton={handleShowUploadModal}
               buttonText="Upload Documents"
             />
           </Col>
@@ -137,10 +144,7 @@ const CustomerDashboard = () => {
       <NewToast />
       <Footer />
 
-      
       <QueryModal show={showQueryModal} handleClose={handleCloseQueryModal} />
-
-      
       <DocumentUploadModal show={showUploadModal} handleClose={handleCloseUploadModal} />
     </Container>
   );

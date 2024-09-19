@@ -3,7 +3,7 @@ import { Modal, Button, Spinner } from 'react-bootstrap';
 import { calculateTotalPaymentAmount } from '../../services/CustomerService';
 import { errorToast } from '../../sharedComponents/MyToast';
 
-const CalculateAmountModal = ({ show, handleClose, installmentAmount, onProceed }) => {
+const CalculateAmountModal = ({ policy_id, show, handleClose, installmentAmount, onProceed }) => {
   const [totalAmount, setTotalAmount] = useState(null);
   const [isFetchingTotal, setIsFetchingTotal] = useState(true); 
 
@@ -14,12 +14,9 @@ const CalculateAmountModal = ({ show, handleClose, installmentAmount, onProceed 
 
       try {
         setIsFetchingTotal(true);
-        console.log('Fetching total amount for installment:', installmentAmount);
-        const total = await calculateTotalPaymentAmount(installmentAmount);
-        console.log('Total amount received:', total);
+        const total = await calculateTotalPaymentAmount(policy_id, installmentAmount);
         setTotalAmount(total);
       } catch (error) {
-        console.error('Error fetching total amount:', error);
         errorToast('Failed to calculate total amount.');
         setTotalAmount('Error');
       } finally {

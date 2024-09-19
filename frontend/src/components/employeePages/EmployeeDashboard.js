@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { FaUserTie, FaUsers, FaRegAddressCard, FaFileAlt, FaChartBar } from 'react-icons/fa'; // Icons
 
 import Header from '../layout/Header';
 import Footer from '../layout/Footer';
@@ -63,32 +64,62 @@ const EmployeeDashboard = () => {
       <CommissionReportModal show={showModal} handleClose={handleCloseModal} />
       <Container fluid className="py-5 px-5" style={{ backgroundColor: 'rgba(230, 242, 255, 0.4)' }}>
         <Row className="px-5 mb-5">
-          <Col md={6} xs={12}> 
-            <div className="text-center">
-              <h1 className="display-4">Welcome, {employee.name || "Employee"}!</h1>
+          <Col md={12}>
+            <div className="text-left">
+              <h1 className="display-4">Welcome, {employee.username || "Employee"}!</h1>
               <p className="lead">Your dashboard for managing the system.</p>
             </div>
           </Col>
         </Row>
 
-        <Row className="px-5 mb-3">
+        <Row className="px-5 mb-4">
           <Col md={4}>
-            <DashboardCard title={"Add Agent"} text={"Manage agents and add new ones."} handleButton={handleAddAgent} buttonText={"Add Agent"} />
+            <DashboardCard
+              icon={<FaUserTie />}
+              title="Add Agent"
+              text="Manage agents and add new ones."
+              handleButton={handleAddAgent}
+              buttonText="Add Agent"
+            />
           </Col>
           <Col md={4}>
-            <DashboardCard title={"View Customers"} text={"View and manage customer information."} handleButton={handleViewCustomers} buttonText={"View Customers"} />
+            <DashboardCard
+              icon={<FaUsers />}
+              title="View Customers"
+              text="View and manage customer information."
+              handleButton={handleViewCustomers}
+              buttonText="View Customers"
+            />
           </Col>
           <Col md={4}>
-            <DashboardCard title={"View Agents"} text={"View and manage agent information."} handleButton={handleViewAgents} buttonText={"View Agents"} />
+            <DashboardCard
+              icon={<FaRegAddressCard />}
+              title="View Agents"
+              text="View and manage agent information."
+              handleButton={handleViewAgents}
+              buttonText="View Agents"
+            />
           </Col>
         </Row>
 
-        <Row className="px-5 mb-3">
+        <Row className="px-5">
           <Col md={4}>
-            <DashboardCard title={"View Queries"} text={"Manage all queries from customers and agents."} handleButton={handleViewQueries} buttonText={"View Queries"} />
+            <DashboardCard
+              icon={<FaFileAlt />}
+              title="View Queries"
+              text="Manage all queries from customers and agents."
+              handleButton={handleViewQueries}
+              buttonText="View Queries"
+            />
           </Col>
           <Col md={4}>
-            <DashboardCard title={"Commission Report"} text={"View your commission report."} handleButton={handleViewCommissionReport} buttonText={"View Report"} />
+            <DashboardCard
+              icon={<FaChartBar />}
+              title="Commission Report"
+              text="View your commission report."
+              handleButton={handleViewCommissionReport}
+              buttonText="View Report"
+            />
           </Col>
         </Row>
       </Container>

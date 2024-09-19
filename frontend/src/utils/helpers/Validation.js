@@ -70,3 +70,27 @@ export const onlyPositive = (value) => {
     }
     return undefined;
   };
+
+
+  export const isFutureDate = (value) => {
+    const selectedDate = new Date(value);
+    const today = new Date();
+    if (selectedDate > today) {
+      return 'Date of birth cannot be in the future';
+    }
+    return undefined;
+  };
+  
+  export const isTenDigits = (value) => {
+    if (!/^\d{10}$/.test(value)) {
+      return 'Phone number must be exactly 10 digits';
+    }
+    return undefined;
+  };
+  
+  export const isAlphanumeric16 = (value) => {
+    if (!/^[A-Za-z0-9]{16}$/.test(value)) {
+      return 'Bank account details must be 16 alphanumeric characters without special characters';
+    }
+    return undefined;
+  };

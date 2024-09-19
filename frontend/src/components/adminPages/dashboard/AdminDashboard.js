@@ -16,6 +16,8 @@ import {viewTaxSetting, createInsuranceSetting, viewInsuranceSetting, createTaxS
 
 import InsuranceSettingForm from '../update/InsuranceSettingForm';
 import TaxSettingForm from '../update/TaxSettingForm';
+import { FaUser, FaUsers, FaCity, FaBuilding, FaFileInvoice, FaMoneyBillWave, FaRegCreditCard } from 'react-icons/fa';
+
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -195,7 +197,7 @@ const AdminDashboard = () => {
       </Col>
 
       <Col xs={12} md={6} className="d-flex align-items-center justify-content-center px-3">
-        <Card className="w-100" style={{ backgroundColor: 'rgba(230, 242, 255, 0.5)' }}>
+        <Card className="w-100 h-100" style={{ backgroundColor: 'rgba(230, 242, 255, 0.5)' }}>
           <Row>
             <Col md={12} className="d-flex align-items-center justify-content-center">
               <Card.Title className="display-6 text-center">Users</Card.Title>

@@ -186,12 +186,12 @@ export const getTransactionsByPolicyId = async (policyId) => {
   }
 };
 
-export const calculateTotalPaymentAmount = async (installmentAmount) => {
+export const calculateTotalPaymentAmount = async (policyId, installmentAmount) => {
   const token = getToken();
   if (!token) throw new UnAuthorized("User is not logged in");
 
   try {
-    const response = await axios.get(`http://localhost:8081/SecureLife.com/calculate-total`, {
+    const response = await axios.get(`http://localhost:8081/SecureLife.com/policy/${policyId}/calculate-total`, {
       params: { installmentAmount },
       headers: {
         Authorization: `Bearer ${token}`,

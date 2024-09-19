@@ -168,7 +168,9 @@ public class PaymentService implements IPaymentService {
         LocalDate today = LocalDate.now();
         double taxPercentage = taxSetting.getTaxPercentage();
         double taxAmount = (installmentAmount * taxPercentage)/100;
-        double penaltyAmount = (today.isAfter(policy.get().getNextPaymentDate()))?0.0:(installmentAmount * insuranceSetting.getLatePenalty())/100;
+        double penaltyAmount = (today.isAfter(policy.get().getNextPaymentDate())) 
+        	    ? (installmentAmount * insuranceSetting.getLatePenalty()) / 100 
+        	    : 0.0;
         double totalAmount = installmentAmount + taxAmount + penaltyAmount;
         logger.info("Calculated total amount: {}", totalAmount);
 
