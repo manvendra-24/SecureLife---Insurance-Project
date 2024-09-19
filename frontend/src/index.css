@@ -1,0 +1,13 @@
+.App {
+    background-image: url('../src/assets/vectors/background.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  
