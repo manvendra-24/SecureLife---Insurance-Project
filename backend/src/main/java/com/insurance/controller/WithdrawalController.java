@@ -97,12 +97,13 @@ public class WithdrawalController {
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "5") int size,
             @RequestParam(name = "sortBy", defaultValue = "withdrawalRequestId") String sortBy,
-            @RequestParam(name = "direction", defaultValue = "asc") String direction) {
+            @RequestParam(name = "direction", defaultValue = "asc") String direction,
+    	@RequestParam(name="searchQuery", defaultValue="") String searchQuery){
 
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String token = authorizationHeader.substring(7);
-            PagedResponse<WithdrawalRequestDTO> withdrawalResponses = service.getMyWithdrawals(token, PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sortBy)));
+            PagedResponse<WithdrawalRequestDTO> withdrawalResponses = service.getMyWithdrawals(token,searchQuery, PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sortBy)));
             return new ResponseEntity<>(withdrawalResponses, HttpStatus.OK);
         }
         throw new ApiException("User is unauthorized");

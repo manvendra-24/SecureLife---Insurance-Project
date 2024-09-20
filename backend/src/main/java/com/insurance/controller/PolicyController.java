@@ -57,6 +57,7 @@ public class PolicyController {
 
     @GetMapping("/customer/{customerId}/policies")
     @Operation(summary = "Get Policies by Customer ID -- BY EMPLOYEE & ADMIN")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('EMPLOYEE')")
     public ResponseEntity<PagedResponse<PolicyResponse>> getPoliciesByCustomerId(
             HttpServletRequest request,
             @PathVariable String customerId,
@@ -100,12 +101,13 @@ public class PolicyController {
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "5") int size,
             @RequestParam(name = "sortBy", defaultValue = "policyId") String sortBy,
-            @RequestParam(name = "direction", defaultValue = "asc") String direction) {
+            @RequestParam(name = "direction", defaultValue = "asc") String direction,
+    		@RequestParam(name = "searchQuery", defaultValue="") String searchQuery){
 
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String token = authorizationHeader.substring(7);
-            PagedResponse<CommissionResponse> policies = service.getMyCommission(token, PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sortBy)));
+            PagedResponse<CommissionResponse> policies = service.getMyCommission(token,searchQuery, PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sortBy)));
             return new ResponseEntity<>(policies, HttpStatus.OK);
         }
         throw new ApiException("User is unauthorized");

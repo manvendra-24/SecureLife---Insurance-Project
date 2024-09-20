@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { FaUserTie, FaUsers, FaRegAddressCard, FaFileAlt, FaChartBar } from 'react-icons/fa'; // Icons
+import { FaUserTie, FaUsers, FaRegAddressCard, FaFileAlt, FaChartBar, FaShieldAlt } from 'react-icons/fa'; 
 
 import Header from '../layout/Header';
 import Footer from '../layout/Footer';
@@ -9,6 +9,7 @@ import DashboardCard from '../../sharedComponents/DashboardCard';
 import Loader from '../../sharedComponents/Loader';
 import NewToast from '../../sharedComponents/NewToast';
 import CommissionReportModal from './CommissionReportModal';
+import ViewPolicyReportModal from './ViewPolicyReportModal'; 
 
 import { getProfile, verifyEmployee } from '../../services/AuthService';
 
@@ -16,7 +17,8 @@ const EmployeeDashboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [employee, setEmployee] = useState({});
-  const [showModal, setShowModal] = useState(false);
+  const [showCommissionModal, setShowCommissionModal] = useState(false);
+  const [showPolicyModal, setShowPolicyModal] = useState(false); 
 
   useEffect(() => {
     const checkEmployeeStatus = async () => {
@@ -55,13 +57,16 @@ const EmployeeDashboard = () => {
   const handleViewCustomers = () => navigate('/SecureLife.com/employee/customers');
   const handleViewAgents = () => navigate('/SecureLife.com/employee/agents');
   const handleViewQueries = () => navigate('/SecureLife.com/employee/queries');
-  const handleViewCommissionReport = () => setShowModal(true);
-  const handleCloseModal = () => setShowModal(false);
+  const handleViewCommissionReport = () => setShowCommissionModal(true);
+  const handleViewPolicyReport = () => setShowPolicyModal(true); 
+  const handleCloseCommissionModal = () => setShowCommissionModal(false);
+  const handleClosePolicyModal = () => setShowPolicyModal(false); 
 
   return (
     <Container fluid className="d-flex flex-column min-vh-100 px-0">
       <Header />
-      <CommissionReportModal show={showModal} handleClose={handleCloseModal} />
+      <CommissionReportModal show={showCommissionModal} handleClose={handleCloseCommissionModal} />
+      <ViewPolicyReportModal show={showPolicyModal} handleClose={handleClosePolicyModal} />
       <Container fluid className="py-5 px-5" style={{ backgroundColor: 'rgba(230, 242, 255, 0.4)' }}>
         <Row className="px-5 mb-5">
           <Col md={12}>
@@ -116,8 +121,17 @@ const EmployeeDashboard = () => {
             <DashboardCard
               icon={<FaChartBar />}
               title="Commission Report"
-              text="View your commission report."
+              text="View Commission report by Agent ID"
               handleButton={handleViewCommissionReport}
+              buttonText="View Report"
+            />
+          </Col>
+          <Col md={4}>
+            <DashboardCard
+              icon={<FaShieldAlt />}
+              title="Policy Report" 
+              text="View Policy Report by Customer ID."
+              handleButton={handleViewPolicyReport} 
               buttonText="View Report"
             />
           </Col>

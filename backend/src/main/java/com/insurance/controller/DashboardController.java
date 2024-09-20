@@ -71,8 +71,6 @@ public class DashboardController {
     @PreAuthorize("hasRole('AGENT')")
     public ResponseEntity<Double> getMyWithdrawals(HttpServletRequest request) {
     	String authorizationHeader = request.getHeader("Authorization");
-        
-        
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String token = authorizationHeader.substring(7);
             Double totalEarnings = service.getMyWithdrawals(token);

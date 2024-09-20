@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
-import { required, isEmail, checkSize } from '../../../utils/helpers/Validation';
+import { required, isEmail, checkSize, isAlphaNumNoSpace, isTenDigits } from '../../../utils/helpers/Validation';
 
 const AddEmployee = ({ show, handleClose, handleSave }) => {
   const [employeeData, setEmployeeData] = useState({
@@ -16,10 +16,10 @@ const AddEmployee = ({ show, handleClose, handleSave }) => {
 
   const validate = () => {
     let tempErrors = {};
-    tempErrors.username = required(employeeData.username) || checkSize(employeeData.username, 4, 50);
-    tempErrors.password = required(employeeData.password) || checkSize(employeeData.password, 6, 100);
+    tempErrors.username = required(employeeData.username) || isAlphaNumNoSpace(employeeData.username) || checkSize(employeeData.username, 4, 50);
+    tempErrors.password = required(employeeData.password) || checkSize(employeeData.password, 6, 20);
     tempErrors.email = required(employeeData.email) || isEmail(employeeData.email);
-    tempErrors.phoneNumber = required(employeeData.phoneNumber) || checkSize(employeeData.phoneNumber, 10, 15);
+    tempErrors.phoneNumber = required(employeeData.phoneNumber) || isTenDigits(employeeData.phoneNumber);
     tempErrors.address = required(employeeData.address) || checkSize(employeeData.address, 0, 255);
     tempErrors.name = required(employeeData.name) || checkSize(employeeData.name, 2, 100);
 

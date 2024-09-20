@@ -3,17 +3,16 @@ import { Container, Row, Col, DropdownButton, Dropdown, Button } from 'react-boo
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { verifyAdmin } from '../../../services/AuthService';
-import { getAllClaims, approveClaim, denyClaim, viewClaimDocuments} from '../../../services/AdminService';
+import { getAllClaims, approveClaim, denyClaim, viewClaimDocuments } from '../../../services/AdminService';
 
 import SearchBar from '../../../sharedComponents/SearchBar';
 import Pagination from '../../../sharedComponents/Pagination';
 import PageSize from '../../../sharedComponents/PageSize';
 import TableData from '../../../sharedComponents/TableData2';
 import PageDropdown from '../../../sharedComponents/PageDropDown';
-import NewToast,{  showToast } from '../../../sharedComponents/NewToast';
+import NewToast, { showToast } from '../../../sharedComponents/NewToast';
 import BackButton from '../../../sharedComponents/BackButton';
 import Loader from '../../../sharedComponents/Loader';
-
 
 import Header from '../../layout/Header';
 import Footer from '../../layout/Footer';
@@ -33,7 +32,7 @@ const ViewClaims = () => {
   const size = parseInt(searchParams.get('size'), 10) || 10;
   const sortBy = searchParams.get('sortBy') || '';
   const direction = searchParams.get('direction') || '';
-
+  const [selectedOption, setSelectedOption] = useState('Sort By');
 
   const fetchData = async () => {
     setLoading(true);
@@ -65,13 +64,13 @@ const ViewClaims = () => {
           setIsAdmin(true);
           fetchData(); 
         } else {
-          showToast('Unauthorized Access! Please Login','error');
+          showToast('Unauthorized Access! Please Login', 'error');
           setTimeout(() => {
             navigate('/SecureLife.com/login');
           }, 1000);
         }
       } catch (error) {
-        showToast('Internal Server Error','error');
+        showToast('Internal Server Error', 'error');
         setTimeout(() => {
           navigate('/SecureLife.com/login');
         }, 1000);          
@@ -85,7 +84,7 @@ const ViewClaims = () => {
     if (isAdmin) {
       fetchData();
     }
-  }, [searchQuery, currentPage, size, sortBy,direction, isAdmin]);
+  }, [searchQuery, currentPage, size, sortBy, direction, isAdmin]);
 
   if (isAdmin === null) {
     return null;
@@ -99,11 +98,11 @@ const ViewClaims = () => {
     try {
       await approveClaim(id);
       showToast('Claim Approved', 'success');
-      setTimeout(()=>{
+      setTimeout(() => {
         fetchData();
-      },1000);       
+      }, 1000);       
     } catch (error) {
-      showToast('Error in approvng claim','error');
+      showToast('Error in approving claim', 'error');
     }
   };
 
@@ -111,20 +110,20 @@ const ViewClaims = () => {
     try {
       const documents = await viewClaimDocuments(id);
       navigate(`/SecureLife.com/admin/claims/${id}/documents`, { state: { documents, id } });
-    }
-    catch (error) {
-      showToast('Failed to fetch claim documents','error');
+    } catch (error) {
+      showToast('Failed to fetch claim documents', 'error');
     }
   };
+
   const rejectClaim = async (id) => {
     try {
       await denyClaim(id);
       showToast('Claim Rejected', 'success');
-      setTimeout(()=>{
+      setTimeout(() => {
         fetchData();
-      },1000);       
+      }, 1000);       
     } catch (error) {
-      showToast('Error in rejecting Claim','error');
+      showToast('Error in rejecting Claim', 'error');
     }
   };
 
@@ -151,6 +150,7 @@ const ViewClaims = () => {
       direction
     });
   };
+
   const handleSizeChange = (newSize) => {
     setLoading(true);
     setSearchParams({
@@ -162,36 +162,38 @@ const ViewClaims = () => {
     });
   };
 
-  const handleSortChange = (newSort) =>{
-    if(sortBy !== newSort){
+  const handleSortChange = (newSortLabel) => {
+    if (sortBy !== newSortLabel) {
       setLoading(true);
       setSearchParams({
         searchQuery,
         page: 1,
         size,
-        sortBy:newSort,
+        sortBy: newSortLabel,
         direction
       });
-    } 
-  }
+    }
+  };
+
   const handleDirectionChange = (newDirection) => {
-    if(direction !== newDirection){
+    if (direction !== newDirection) {
       setLoading(true);
       setSearchParams({
         searchQuery,
         page: 1,
         size,
         sortBy,
-        direction:newDirection
+        direction: newDirection
       });  
     }
-  }
+  };
 
   const sortOptions = [
-    { label: 'Policy ID', value: 'policyId' },
-    { label: 'Customer ID', value: 'customerId' },
-    {label:'Claim ID', value:'claimId'}
+    { label: 'Policy ID', value: 'policy.policyId' },
+    { label: 'Claim ID', value: 'claimId' },
+    { label: 'Customer ID', value: 'policy.customer.customerId' }
   ];
+
   const handleReset = () => {
     setSearchParams({
       searchQuery: '',
@@ -202,59 +204,66 @@ const ViewClaims = () => {
     });
   };
 
-
   return (
     <Container fluid className="d-flex flex-column min-vh-100 px-0">
-      <Header/>
-        <Container fluid className="py-5" style={{backgroundColor:'rgba(230, 242, 255, 0.5)'}}>
-          <Row className="m-5">
-            <Col md={8}>
+      <Header />
+      <Container fluid className="py-5" style={{ backgroundColor: 'rgba(230, 242, 255, 0.5)' }}>
+        <Row className="m-5">
+          <Col md={8}>
             <h2>Claim Requests</h2>
-            </Col>
+          </Col>
+        </Row>
+        <Row className="m-5">
+          <Col md={3} className="mb-3">
+            <Row>
+              <Col md={6}>
+                <DropdownButton title={sortBy ? selectedOption : "Sort By"} variant="outline-secondary">
+                  {sortOptions.map((option) => (
+                    <Dropdown.Item key={option.label} onClick={() => {setSelectedOption(option.label);handleSortChange(option.value);}}>
+                      {option.label}
+                    </Dropdown.Item>
+                  ))}
+                </DropdownButton>
+              </Col>
+              <Col md={6}>
+                <DropdownButton title={direction ? direction : "Direction"} variant="outline-secondary">
+                  <Dropdown.Item onClick={() => handleDirectionChange('Asc')}>Asc</Dropdown.Item>
+                  <Dropdown.Item onClick={() => handleDirectionChange('Desc')}>Desc</Dropdown.Item>
+                </DropdownButton>
+              </Col>
+            </Row>
+          </Col>
+          <Col md={3} className="mb-3 page-size-container-center">
+            <SearchBar onSearch={handleSearch} defaultValue={searchQuery} />
+          </Col>
+          <Col md={2} className="mb-3">
+            <Button variant="secondary" onClick={handleReset}>Reset</Button>
+          </Col>
+          <Col md={4} className="page-size-container-right d-flex justify-content-end">
+            <PageDropdown
+              noOfPages={noOfPages}
+              currentPage={currentPage}
+              setPageNo={handlePageChange}
+            />
+            <PageSize size={size} setSize={handleSizeChange} />
+          </Col>
+        </Row>
+
+        <div>
+          <Row className="m-5">
+            <TableData data={data} fetchData={fetchData} status={"Claim"} getInsideData={viewDocuments} activateRow={acceptClaim} deactivateRow={rejectClaim} />
           </Row>
           <Row className="m-5">
-            <Col md={2} className='mb-3'>
-              <DropdownButton title={sortBy ? sortBy : "Sort By"} variant="outline-secondary">
-                {sortOptions.map(option => (
-                  <Dropdown.Item key={option.value} onClick={() => handleSortChange(option.value)}>
-                    {option.label}
-                  </Dropdown.Item>
-                ))}
-              </DropdownButton>
+            <Col md={6}>
+              <Pagination noOfPages={noOfPages} currentPage={currentPage} setPageNo={handlePageChange} />
             </Col>
-            <Col md={1} className='mb-3'>
-              
-              <DropdownButton title={direction ? direction : "Direction"} variant="outline-secondary">
-                <Dropdown.Item onClick={() => handleDirectionChange('asc')}>Asc</Dropdown.Item>
-                <Dropdown.Item onClick={() => handleDirectionChange('desc')}>Desc</Dropdown.Item>
-              </DropdownButton>
-            </Col>
-            <Col md={4} className="page-size-container-center">
-              <SearchBar onSearch={handleSearch} defaultValue={searchQuery} />
-            </Col>
-            <Col md={1} className='mb-3'>
-              <Button variant="secondary" onClick={handleReset}>Reset</Button>
-            </Col>
-            <Col md={4} className="page-size-container-right d-flex justify-content-end">
-              <PageDropdown noOfPages={noOfPages} currentPage={currentPage} setPageNo={handlePageChange} />
-              <PageSize size={size} setSize={handleSizeChange} />
+            <Col md={6} style={{ textAlign: 'right' }}>
+              <BackButton />
             </Col>
           </Row>
-            <div>
-              <Row className="m-5">
-                <TableData data={data} fetchData={fetchData} status={"Claim"}  getInsideData={viewDocuments} activateRow={acceptClaim} deactivateRow={rejectClaim}/>
-              </Row>
-              <Row className="m-5">
-                <Col md={6}>
-                <Pagination noOfPages={noOfPages} currentPage={currentPage} setPageNo={handlePageChange} />
-                </Col>
-                <Col md={6} style={{textAlign:'right'}}>
-                <BackButton />
-                </Col>
-              </Row>
-            </div>
-        </Container>
-        <NewToast/>
+        </div>
+      </Container>
+      <NewToast />
       <Footer />
     </Container>
   );

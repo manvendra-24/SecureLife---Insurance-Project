@@ -97,9 +97,11 @@ public class PolicyService implements IPolicyService {
         }
         
         int customerAge = Period.between(customer.getDob(), LocalDate.now()).getYears();
-
+        if(customer.getStatus() != CreationStatus.APPROVED) {
+        	throw new ApiException("Customer is not verified");
+        }
         if (customerAge < insurancePlan.getMinimumAge() || customerAge > insurancePlan.getMaximumAge()) {
-            throw new IllegalArgumentException("Customer's age does not meet the requirements for the selected insurance plan.");
+            throw new ApiException("Age does not meet the requirements for the selected insurance plan.");
         }
 
         if (policyRequest.getTotalInvestmentAmount() < insurancePlan.getMinimumInvestmentAmount() ||
@@ -237,7 +239,7 @@ public class PolicyService implements IPolicyService {
     }
 
     @Override
-    public PagedResponse<CommissionResponse> getMyCommission(String token, Pageable pageable) {
+    public PagedResponse<CommissionResponse> getMyCommission(String token, String searchQuery, Pageable pageable) {
         String username = jwtTokenProvider.getUsername(token);
         logger.info("Fetching commissions for agent: {}", username);
 
@@ -251,7 +253,7 @@ public class PolicyService implements IPolicyService {
             throw new ApiException("Agent not found for "+ username);
         }
 
-        Page<Policy> policies = policyRepository.findByAgent(agent, pageable);
+        Page<Policy> policies = policyRepository.findByAgentWithSearchQuery(agent, searchQuery, pageable);
         List<CommissionResponse> commissionResponses = policies.getContent().stream()
             .map(mappers::convertToCommissionResponse)
             .collect(Collectors.toList());

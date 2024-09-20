@@ -4,7 +4,7 @@ import { Container, Row, Col, Card, Button, Form } from 'react-bootstrap';
 import NewToast, { showToast } from '../../../sharedComponents/NewToast';
 import Header from '../../layout/Header';
 import Footer from '../../layout/Footer';
-import { required } from '../../../utils/helpers/Validation';
+import { required,isAlphaWithSpace} from '../../../utils/helpers/Validation';
 import { addInsuranceType } from '../../../services/AdminService';
 import { verifyAdmin } from '../../../services/AuthService';
 
@@ -43,7 +43,7 @@ const AddInsuranceTypeForm = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    newErrors.name = required(name);
+    newErrors.name = required(name)||isAlphaWithSpace(name);
     setErrors(newErrors);
     return Object.values(newErrors).every((error) => error === undefined);
   };

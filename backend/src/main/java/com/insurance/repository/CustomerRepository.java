@@ -23,10 +23,10 @@ public interface CustomerRepository extends JpaRepository<Customer,String >{
 
 	boolean existsByCityAndUserIsActive(City city, boolean b);
 
-	   @Query("SELECT c FROM Customer c WHERE c.agent = :agent " +
-	           "AND (LOWER(c.name) LIKE LOWER(CONCAT('%', :searchQuery, '%')) " +
-	           "OR LOWER(c.user.email) LIKE LOWER(CONCAT('%', :searchQuery, '%')) " +
-	           "OR LOWER(c.phoneNumber) LIKE LOWER(CONCAT('%', :searchQuery, '%')))")
+	   @Query("SELECT c FROM Customer c " + 
+			   	"JOIN c.user u "+
+	   			"WHERE c.agent = :agent " +
+	           "AND CONCAT(c.customerId, ' ', c.name, ' ', u.username, ' ', u.email, ' ', c.phoneNumber) LIKE %:searchQuery%")
 	    Page<Customer> findByAgentWithSearchQuery(@Param("agent") Agent agent,
 	                                              @Param("searchQuery") String searchQuery,
 	                                              Pageable pageable);

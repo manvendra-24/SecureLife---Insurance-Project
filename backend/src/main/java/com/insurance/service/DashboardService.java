@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.insurance.entities.Agent;
 import com.insurance.entities.Policy;
 import com.insurance.entities.User;
+import com.insurance.enums.PolicyStatus;
 import com.insurance.exceptions.UnauthorizedException;
 import com.insurance.interfaces.IDashboardService;
 import com.insurance.repository.AdminRepository;
@@ -103,7 +104,8 @@ public Double getMyWithdrawals(String token) {
     }
     
     Double totalWithdrawals = 0.0;
-    List<Policy> policies = policyRepository.findByAgent(agent);
+    List<Policy> policies = policyRepository.findByAgentAndStatusIsCancelled(agent, PolicyStatus.CANCELLED);
+
     
     for(Policy policy:policies) {
     	totalWithdrawals = totalWithdrawals + policy.getPlan().getInsuranceScheme().getWithdrawalPenalty();

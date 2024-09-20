@@ -111,8 +111,8 @@ public class ClaimService implements IClaimService {
     }
 
     @Override
-    public Page<ClaimResponse> getAllClaims(Pageable pageable) {
-        Page<Claim> claims = claimRepository.findAll(pageable);
+    public Page<ClaimResponse> getAllClaims(String searchQuery, Pageable pageable) {
+        Page<Claim> claims = claimRepository.findAllWithSearchQuery(searchQuery, pageable);
         return claims.map(this::convertToClaimResponse); 
     }
 
@@ -172,6 +172,7 @@ public class ClaimService implements IClaimService {
         response.setClaimId(claim.getClaimId());
         response.setPolicyId(claim.getPolicy().getPolicyId());
         response.setExplanation(claim.getExplanation());
+        response.setCustomerId(claim.getPolicy().getCustomer().getCustomerId());
         response.setStatus(claim.getStatus());
         return response;
     }

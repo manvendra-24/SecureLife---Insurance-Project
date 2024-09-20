@@ -1,7 +1,6 @@
 package com.insurance.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -193,29 +192,31 @@ public class WithdrawalService implements IWithdrawalService {
 	@Override
 	public PagedResponse<WithdrawalRequestDTO> getAllWithdrawalRequests(int page, int size, String sortBy,
 			String direction, String searchQuery) {
+		System.out.println(searchQuery);
 		logger.info("Fetching all withdrawal requests with page: {}, size: {}, sortBy: {}, direction: {}", page, size, sortBy, direction);
         Sort sort = direction.equalsIgnoreCase(Sort.Direction.DESC.name()) 
                     ? Sort.by(sortBy).descending() 
                     : Sort.by(sortBy).ascending();
         PageRequest pageable = PageRequest.of(page, size, sort);
-        Page<WithdrawalRequest> page1 = withdrawalRequestRepository.findAllWithSearchQuery(searchQuery, pageable);
-        List<WithdrawalRequest> requests = page1.getContent();
-        List<WithdrawalRequestDTO> withdrawalResponses = new ArrayList<>();
-        for (WithdrawalRequest request : requests) {
-            WithdrawalRequestDTO withdrawalResponse = new WithdrawalRequestDTO();
-            withdrawalResponse.setCustomerId(request.getCustomer().getCustomerId());
-            withdrawalResponse.setWithdrawalRequestId(request.getWithdrawalRequestId());
-            withdrawalResponse.setPolicyId(request.getPolicy().getPolicyId());
-            withdrawalResponse.setRequestDate(request.getRequestDate());
-            withdrawalResponse.setStatus(request.getStatus());
-            withdrawalResponses.add(withdrawalResponse);
-        }
-        logger.info("Found {} withdrawal Requests", withdrawalResponses.size());
-        return new PagedResponse<>(withdrawalResponses, page1.getNumber(), page1.getSize(), page1.getTotalElements(), page1.getTotalPages(), page1.isLast());	
-     }
+        Page<WithdrawalRequest> withdrawals = withdrawalRequestRepository.findAllWithSearchQuery(searchQuery, pageable);
+        List<WithdrawalRequestDTO> withdrawalResponses = withdrawals.getContent().stream().map(request -> {
+	        WithdrawalRequestDTO withdrawalResponse = new WithdrawalRequestDTO();
+	        withdrawalResponse.setCustomerId(request.getCustomer().getCustomerId());
+	        withdrawalResponse.setWithdrawalRequestId(request.getWithdrawalRequestId());
+	        withdrawalResponse.setPolicyId(request.getPolicy().getPolicyId());
+	        withdrawalResponse.setRequestDate(request.getRequestDate());
+	        withdrawalResponse.setStatus(request.getStatus());
+	        withdrawalResponse.setWithdrawalPenalty(request.getPolicy().getPlan().getInsuranceScheme().getWithdrawalPenalty());
+	        return withdrawalResponse;
+	    }).collect(Collectors.toList());
+
+	    return new PagedResponse<>(withdrawalResponses, withdrawals.getNumber(),
+	                               withdrawals.getSize(), withdrawals.getTotalElements(), withdrawals.getTotalPages(), withdrawals.isLast());
+	}
+
 
 	@Override
-	public PagedResponse<WithdrawalRequestDTO> getMyWithdrawals(String token, PageRequest pageRequest) {
+	public PagedResponse<WithdrawalRequestDTO> getMyWithdrawals(String token,String searchQuery, PageRequest pageRequest) {
 	    String username = jwtTokenProvider.getUsername(token);
 	    logger.info("Fetching withdrawal requests for agent: {}", username);
 
@@ -229,7 +230,7 @@ public class WithdrawalService implements IWithdrawalService {
 	        throw new ApiException("Agent not found for user: " + username);
 	    }
 
-	    Page<WithdrawalRequest> withdrawals = withdrawalRequestRepository.findByAgent(agent, pageRequest);
+	    Page<WithdrawalRequest> withdrawals = withdrawalRequestRepository.findByAgentWithSearchQuery(agent, searchQuery, pageRequest);
 
 	    List<WithdrawalRequestDTO> withdrawalResponses = withdrawals.getContent().stream().map(request -> {
 	        WithdrawalRequestDTO withdrawalResponse = new WithdrawalRequestDTO();

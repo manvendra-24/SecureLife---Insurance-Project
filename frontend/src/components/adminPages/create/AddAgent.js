@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
-import { required, isEmail, checkSize, onlyPositive } from '../../../utils/helpers/Validation';
+import { required, isEmail, checkSize, onlyPositive, isAlphaNumNoSpace, isTenDigits } from '../../../utils/helpers/Validation';
 
 const AddAgent = ({ show, handleClose, handleSave }) => {
   const [agentData, setAgentData] = useState({
@@ -17,13 +17,13 @@ const AddAgent = ({ show, handleClose, handleSave }) => {
 
   const validate = (data) => {
     let tempErrors = {};
-    tempErrors.username = required(data.username) || checkSize(data.username, 4, 50);
-    tempErrors.password = required(data.password) || checkSize(data.password, 8);
+    tempErrors.username = required(data.username) || isAlphaNumNoSpace(data.username) || checkSize(data.username, 4, 50);
+    tempErrors.password = required(data.password) || checkSize(data.password, 8, 20);
     tempErrors.email = required(data.email) || isEmail(data.email);
-    tempErrors.phoneNumber = required(data.phoneNumber) || checkSize(data.phoneNumber, 10) || onlyPositive(data.phoneNumber);
+    tempErrors.phoneNumber = required(data.phoneNumber) || isTenDigits(data.phoneNumber) || onlyPositive(data.phoneNumber);
     tempErrors.address = required(data.address) || checkSize(data.address, 0, 255);
     tempErrors.name = required(data.name) || checkSize(data.name, 2, 100);
-    tempErrors.city_id = required(data.city_id);
+    tempErrors.city_id = required(data.city_id) || isAlphaNumNoSpace(data.city_id);
 
     setErrors(tempErrors);
     return Object.values(tempErrors).every(x => x === undefined || x === '');

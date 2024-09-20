@@ -16,8 +16,9 @@ import {viewTaxSetting, createInsuranceSetting, viewInsuranceSetting, createTaxS
 
 import InsuranceSettingForm from '../update/InsuranceSettingForm';
 import TaxSettingForm from '../update/TaxSettingForm';
-import { FaUser, FaUsers, FaCity, FaBuilding, FaFileInvoice, FaMoneyBillWave, FaRegCreditCard } from 'react-icons/fa';
-
+import {  FaUsers, FaCity, FaBuilding, FaFileInvoice, FaMoneyBillWave, FaRegCreditCard, FaChartBar, FaUserTie, FaUserCircle, FaUserShield, FaShieldAlt } from 'react-icons/fa';
+import CommissionReportModal from '../../employeePages/CommissionReportModal';
+import ViewPolicyReportModal from '../../employeePages/ViewPolicyReportModal';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -32,7 +33,12 @@ const AdminDashboard = () => {
   const [username, setUsername] = useState('');
   const [currentTaxPercentage, setCurrentTaxPercentage] = useState('');
   const [currentClaimDeduction, setCurrentClaimDeduction] = useState('');
-  const [currentPenaltyAmount, setCurrentPenaltyAmount] = useState('');
+  const [currentWithdrawalPenalty, setCurrentWithdrawalPenalty] = useState('');
+  const [currentLatePenalty, setCurrentLatePenalty] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [showPolicyModal, setShowPolicyModal] = useState(false); 
+
+
 
   useEffect(() => {
     const checkAdminStatus = async () => {
@@ -75,7 +81,8 @@ const AdminDashboard = () => {
 
             const insuranceData = await viewInsuranceSetting();
             setCurrentClaimDeduction(insuranceData.claimDeduction);
-            setCurrentPenaltyAmount(insuranceData.penaltyAmount);
+            setCurrentWithdrawalPenalty(insuranceData.withdrawalPenalty);
+            setCurrentLatePenalty(insuranceData.latePenalty);
         } catch (error) {
             showToast('Error Loading Dashboard Data','error');           
         }finally{
@@ -140,8 +147,9 @@ const AdminDashboard = () => {
   const handleInsuranceSubmit = async (e) => {
     try {
       const claimDeduction = parseFloat(e.claimDeduction);
-      const penaltyAmount = parseFloat(e.penaltyAmount);
-      await createInsuranceSetting({ claimDeduction, penaltyAmount });
+      const withdrawalPenalty = parseFloat(e.withdrawalPenalty);
+      const latePenalty = parseFloat(e.latePenalty);
+      await createInsuranceSetting({ claimDeduction, withdrawalPenalty, latePenalty });
       showToast('Insurance setting created successfully', 'success');
       setShowInsuranceModal(false);
     } catch (error) {
@@ -155,16 +163,24 @@ const AdminDashboard = () => {
   const handleInsuranceSetting = ()=>{
     setShowInsuranceModal(true)
   }
+  const handleViewCommissionReport = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
+  const handleViewPolicyReport = () => setShowPolicyModal(true); 
+  const handleClosePolicyModal = () => setShowPolicyModal(false); 
+
 
   return (
     <Container fluid className="d-flex flex-column min-vh-100 px-0">
       <Header />
+      <CommissionReportModal show={showModal} handleClose={handleCloseModal} />
+      <ViewPolicyReportModal show={showPolicyModal} handleClose={handleClosePolicyModal} />
       <InsuranceSettingForm
         show={showInsuranceModal}
         handleClose={() => setShowInsuranceModal(false)}
         handleSave={handleInsuranceSubmit}
         initialClaimDeduction={currentClaimDeduction}
-        initialPenaltyAmount={currentPenaltyAmount}
+        initialWithdrawalPenalty={currentWithdrawalPenalty}
+        initialLatePenalty = {currentLatePenalty}
       />
       <TaxSettingForm
         show={showTaxModal}
@@ -216,38 +232,59 @@ const AdminDashboard = () => {
 
         <Row className="px-5 mb-3">
           <Col md={4}>
-            <DashboardCard title={"Customer Management"} text={"Manage all customers"} handleButton={handleCustomer} buttonText={"View Customers"}/>
+            <DashboardCard icon={<FaUsers/>} title={"Customer Management"} text={"Manage all customers"} handleButton={handleCustomer} buttonText={"View Customers"}/>
           </Col>
           <Col md={4}>
-            <DashboardCard title={"Agent Management"} text={"Manage all agents"} handleButton={handleAgent} buttonText={"View Agents"}/>
+            <DashboardCard icon={<FaUserTie/>} title={"Agent Management"} text={"Manage all agents"} handleButton={handleAgent} buttonText={"View Agents"}/>
           </Col>
           <Col md={4}>
-            <DashboardCard title={"Employee Management"} text={"Manage all employees"} handleButton={handleEmployee} buttonText={"View Employees"}/>
+            <DashboardCard icon={<FaUserCircle/>} title={"Employee Management"} text={"Manage all employees"} handleButton={handleEmployee} buttonText={"View Employees"}/>
           </Col>        
         </Row>
 
         <Row className="px-5 mb-3">
           <Col md={4}>
-            <DashboardCard title={"Admin Management"} text={"Manage all admins"} handleButton={handleAdmin} buttonText={"View Admins"}/>
+            <DashboardCard icon={<FaUserShield/>} title={"Admin Management"} text={"Manage all admins"} handleButton={handleAdmin} buttonText={"View Admins"}/>
           </Col>
           <Col md={4}>
-            <DashboardCard title={"City Management"} text={"Manage all cities"} handleButton={handleCity} buttonText={"View Cities"}/>
+          <DashboardCard
+              icon={<FaChartBar />}
+              title="Commission Report"
+              text="View Commission Report by Agent ID"
+              handleButton={handleViewCommissionReport}
+              buttonText="View Report"
+            />
           </Col>
           <Col md={4}>
-            <DashboardCard title={"State Management"} text={"Manage all states"} handleButton={handleState} buttonText={"View States"}/>
-          </Col> 
+            <DashboardCard
+              icon={<FaShieldAlt />}              
+              title="Policy Report" 
+              text="View Policy Report by Customer ID"
+              handleButton={handleViewPolicyReport} 
+              buttonText="View Report"
+            />
+          </Col>
+           
         </Row>
 
         <Row className="px-5 mb-3">
           <Col md={4}>
-            <DashboardCard title={"Insurance Management"} text={"Manage all insurances"} handleButton={handleInsurance} buttonText={"View Insurances"}/>
+            <DashboardCard icon={<FaFileInvoice/>} title={"Insurance Management"} text={"Manage all insurances"} handleButton={handleInsurance} buttonText={"View Insurances"}/>
           </Col>
           <Col md={4}>
-            <DashboardCard title={"Withdrawal Management"} text={"Manage all withdrawal"} handleButton={handleWithdrawal} buttonText={"Withdrawal Requests"}/>
+            <DashboardCard icon={<FaMoneyBillWave/>} title={"Withdrawal Management"} text={"Manage all withdrawal"} handleButton={handleWithdrawal} buttonText={"Withdrawal Requests"}/>
           </Col>
           <Col md={4}>
-            <DashboardCard title={"Claim Management"} text={"Manage all claim"} handleButton={handleClaim} buttonText={"Claim Requests"}/>
+            <DashboardCard icon={<FaRegCreditCard/>} title={"Claim Management"} text={"Manage all claim"} handleButton={handleClaim} buttonText={"Claim Requests"}/>
           </Col>
+        </Row>
+        <Row className="px-5 mb-3">
+        <Col md={4}>
+            <DashboardCard icon={<FaBuilding/>} title={"City Management"} text={"Manage all cities"} handleButton={handleCity} buttonText={"View Cities"}/>
+          </Col>
+          <Col md={4}>
+            <DashboardCard icon={<FaCity/>} title={"State Management"} text={"Manage all states"} handleButton={handleState} buttonText={"View States"}/>
+          </Col>            
         </Row>
       </Container>
       <NewToast/>

@@ -16,7 +16,7 @@ public interface IWithdrawalService {
 	PagedResponse<WithdrawalRequestDTO> getAllWithdrawalRequests(int page, int size, String sortBy, String direction,
 			String searchQuery);
 
-	PagedResponse<WithdrawalRequestDTO> getMyWithdrawals(String token, PageRequest of);
+	PagedResponse<WithdrawalRequestDTO> getMyWithdrawals(String token, String searchQuery, PageRequest of);
 
 
 }

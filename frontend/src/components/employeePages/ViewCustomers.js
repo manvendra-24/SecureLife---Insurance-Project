@@ -2,6 +2,9 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Container, Row, Col, DropdownButton, Dropdown, Button } from 'react-bootstrap';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
+import jsPDF from 'jspdf';  
+import 'jspdf-autotable';   
+
 import { verifyEmployee } from '../../services/AuthService';
 import { getAllCustomers, toggleCustomerStatus, getCustomerDocuments } from '../../services/EmployeeService';
 
@@ -21,7 +24,6 @@ import NewButton from '../../sharedComponents/NewButton';
 const ViewCustomers = () => {
   const [isEmployee, setIsEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [data, setData] = useState([]);
   const [noOfPages, setNoOfPages] = useState(0);
   const [sortBy, setSortBy] = useState('');  
@@ -68,7 +70,6 @@ const ViewCustomers = () => {
       })
       .catch((error) => {
         console.error('There was an error fetching the customers!', error);
-        setError('Error in getting customers');
         setLoading(false);
       });
   }, [searchQuery, currentPage, size, sortBy, direction]);
@@ -78,6 +79,48 @@ const ViewCustomers = () => {
       fetchData();
     }
   }, [fetchData, isEmployee]);
+
+ 
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+
+    
+    doc.text('Customer Report', 14, 16);
+
+   
+    doc.autoTable({
+      startY: 22,
+      head: [['Customer ID', 'Name', 'Email', 'Verified By', 'Status', 'Active']],
+      body: data.map(customer => [
+        customer.customerId,
+        customer.name,
+        customer.email,
+        customer.verifiedby || 'N/A',  
+        customer.status,
+        customer.active ? 'YES' : 'NO',
+      ]),
+      columnStyles: {
+        0: { cellWidth: 25 }, 
+        1: { cellWidth: 30 },  
+        2: { cellWidth: 50 },  
+        3: { cellWidth: 30 },  
+        4: { cellWidth: 30 },  
+        5: { cellWidth: 20 }, 
+      },
+      styles: {
+        fontSize: 9, 
+        cellPadding: 2,  
+      },
+      headStyles: {
+        fillColor: [41, 128, 185], 
+        textColor: [255, 255, 255], 
+      },
+      theme: 'grid',
+    });
+
+    
+    doc.save('Customer_Report.pdf');
+  };
 
   const handleSearch = (newSearchQuery) => {
     setLoading(true);
@@ -171,20 +214,18 @@ const ViewCustomers = () => {
     navigate(`/SecureLife.com/employee/customers/${customerId}/update`);
   };
 
+  const handleAdd = () => {
+    navigate('/SecureLife.com/register');
+  };
+
   if (loading) {
     return <Loader />;
   }
-
-
 
   const sortOptions = [
     { label: 'Customer ID', value: 'customerId' },
     { label: 'Name', value: 'name' },
   ];
-
-  const handleAdd = () => {
-    navigate('/SecureLife.com/register');
-  };
 
   return (
     <Container fluid className="d-flex flex-column min-vh-100 px-0">
@@ -195,6 +236,7 @@ const ViewCustomers = () => {
             <h2>Customers Data</h2> 
           </Col>
           <Col md={4} style={{ textAlign: 'right' }}>
+            <Button variant="success" className="me-3" onClick={downloadPDF}>Download PDF</Button> {/* Add PDF Button */}
             <NewButton text={"Add New Customer"} handleButton={handleAdd} /> 
           </Col>
         </Row>          

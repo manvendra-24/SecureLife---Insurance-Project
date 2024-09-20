@@ -17,7 +17,7 @@ public interface IPolicyService {
 
     PagedResponse<PolicyResponse> getMyPolicies(String token, Pageable pageable);
 
-	PagedResponse<CommissionResponse> getMyCommission(String token, Pageable pageable);
+	PagedResponse<CommissionResponse> getMyCommission(String token, String searchQuery, Pageable pageable);
 
 	PagedResponse<CommissionResponse> getCommissionByAgentId(String token, String agentId, Pageable pageable);
 

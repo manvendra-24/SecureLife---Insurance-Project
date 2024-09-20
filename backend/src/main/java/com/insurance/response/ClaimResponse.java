@@ -6,6 +6,7 @@ public class ClaimResponse {
 
     private Long claimId;
     private String policyId;
+    private String customerId;
     
     private String explanation;
     private ClaimStatus status;
@@ -15,7 +16,19 @@ public class ClaimResponse {
 
     
 
-    public Long getClaimId() {
+    public String getCustomerId() {
+		return customerId;
+	}
+
+
+
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
+	}
+
+
+
+	public Long getClaimId() {
         return claimId;
     }
 

@@ -17,7 +17,7 @@ public interface IClaimService {
 
     Page<ClaimResponse> getAllClaimsByCustomerId(String customerId, Pageable pageable);
 
-    Page<ClaimResponse> getAllClaims(Pageable pageable);
+    Page<ClaimResponse> getAllClaims(String searchQuery, Pageable pageable);
 
     void approveClaim(Long claimId);
 

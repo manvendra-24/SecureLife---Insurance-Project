@@ -11,7 +11,7 @@ const handleErrors = (error) => {
     } else if (status === 401) {
       throw new UnAuthorized("Unauthorized access");
     } else if (status === 400) {
-      throw new ValidationError("Invalid data provided");
+      throw new ValidationError(error.response.data.message);
     } else if (status === 500) {
       throw new InternalServerError("Internal server error");
     }

@@ -129,7 +129,6 @@ public class CustomerService implements ICustomerService {
             }
         }
 
-        // Set city and other details for the customer
         City city = cityRepository.findById(registerDto.getCityId())
                 .orElseThrow(() -> new ResourceNotFoundException("City not found"));
         customer.setCity(city);

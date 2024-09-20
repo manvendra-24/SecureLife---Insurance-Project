@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, DropdownButton, Dropdown, Button } from 'react-bootstrap';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
+import jsPDF from 'jspdf';  
+import 'jspdf-autotable';   
+
 import { verifyAdmin } from '../../../services/AuthService'; 
 import { getAllCustomers, activateCustomer, deactivateCustomer } from '../../../services/AdminService';
 
@@ -110,7 +113,8 @@ const ViewCustomer = () => {
       showToast('Customer Deactivated successfully', 'success');
       setTimeout(()=>{
         fetchData();
-      },1000);     } catch (error) {
+      },1000);     
+    } catch (error) {
       showToast('Error in deactivating customer','error');
     }
   };
@@ -151,7 +155,7 @@ const ViewCustomer = () => {
   };
 
   const handleSortChange = (newSort) =>{
-    if(sortBy != newSort){
+    if(sortBy !== newSort){
       setLoading(true);
       setSearchParams({
         searchQuery,
@@ -162,8 +166,9 @@ const ViewCustomer = () => {
       });
     } 
   }
+
   const handleDirectionChange = (newDirection) => {
-    if(direction != newDirection){
+    if(direction !== newDirection){
       setLoading(true);
       setSearchParams({
         searchQuery,
@@ -194,6 +199,46 @@ const ViewCustomer = () => {
     navigate('/SecureLife.com/register');
   };
 
+
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+
+  
+    doc.text('Customer Report', 14, 16);
+
+    
+    doc.autoTable({
+      startY: 22,
+      head: [['Customer ID', 'Name', 'Email', 'Status', 'Active']],
+      body: data.map(customer => [
+        customer.customerId,
+        customer.name,
+        customer.email,
+        customer.status,
+        customer.active ? 'YES' : 'NO',
+      ]),
+      columnStyles: {
+        0: { cellWidth: 30 }, 
+        1: { cellWidth: 40 },  
+        2: { cellWidth: 60 },  
+        3: { cellWidth: 25 }, 
+        4: { cellWidth: 15 },  
+      },
+      styles: {
+        fontSize: 9,  
+        cellPadding: 2,
+      },
+      headStyles: {
+        fillColor: [41, 128, 185], 
+        textColor: [255, 255, 255], 
+      },
+      theme: 'grid',
+    });
+
+    
+    doc.save('Customer_Report.pdf');
+  };
+
   return (
     <Container fluid className="bg-light text-dark d-flex flex-column min-vh-100 px-0">
       <Header/>
@@ -203,6 +248,7 @@ const ViewCustomer = () => {
             <h2>Customers Data</h2> 
           </Col>
           <Col md={4} style={{ textAlign: 'right' }}>
+            <Button variant="success" className="me-3" onClick={downloadPDF}>Download PDF</Button> {/* Add PDF Button */}
             <NewButton text={"Add New Customer"} handleButton={handleAdd} /> 
           </Col>
         </Row>

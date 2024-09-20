@@ -33,6 +33,8 @@ const ViewWithdrawals = () => {
   const size = parseInt(searchParams.get('size'), 10) || 10;
   const sortBy = searchParams.get('sortBy') || '';
   const direction = searchParams.get('direction') || '';
+  const [selectedOption, setSelectedOption] = useState('Sort By');
+
 
 
   const fetchData = async () => {
@@ -179,9 +181,9 @@ const ViewWithdrawals = () => {
   }
 
   const sortOptions = [
-    { label: 'Policy ID', value: 'policyId' },
-    { label: 'Customer ID', value: 'customerId' },
-    {label:'Withdrawal ID', value:'withdrawalRequestId'}
+    { label: 'Policy ID', value: 'policy.policyId' },
+    {label:'Withdrawal ID', value:'withdrawalRequestId'},
+    { label: 'Customer ID', value: 'policy.customer.customerId' }
   ];
   const handleReset = () => {
     setSearchParams({
@@ -204,33 +206,40 @@ const ViewWithdrawals = () => {
             </Col>
           </Row>
           <Row className="m-5">
-            <Col md={2} className='mb-3'>
-              <DropdownButton title={sortBy ? sortBy : "Sort By"} variant="outline-secondary">
-                {sortOptions.map(option => (
-                  <Dropdown.Item key={option.value} onClick={() => handleSortChange(option.value)}>
-                    {option.label}
-                  </Dropdown.Item>
-                ))}
-              </DropdownButton>
-            </Col>
-            <Col md={1} className='mb-3'>
-              
-              <DropdownButton title={direction ? direction : "Direction"} variant="outline-secondary">
-                <Dropdown.Item onClick={() => handleDirectionChange('asc')}>Asc</Dropdown.Item>
-                <Dropdown.Item onClick={() => handleDirectionChange('desc')}>Desc</Dropdown.Item>
-              </DropdownButton>
-            </Col>
-            <Col md={4} className="page-size-container-center">
-              <SearchBar onSearch={handleSearch} defaultValue={searchQuery} />
-            </Col>
-            <Col md={1} className='mb-3'>
-              <Button variant="secondary" onClick={handleReset}>Reset</Button>
-            </Col>
-            <Col md={4} className="page-size-container-right d-flex justify-content-end">
-              <PageDropdown noOfPages={noOfPages} currentPage={currentPage} setPageNo={handlePageChange} />
-              <PageSize size={size} setSize={handleSizeChange} />
-            </Col>
-          </Row>
+          <Col md={3} className="mb-3">
+            <Row>
+              <Col md={6}>
+                <DropdownButton title={sortBy ? selectedOption : "Sort By"} variant="outline-secondary">
+                  {sortOptions.map((option) => (
+                    <Dropdown.Item key={option.label} onClick={() => {setSelectedOption(option.label);handleSortChange(option.value);}}>
+                      {option.label}
+                    </Dropdown.Item>
+                  ))}
+                </DropdownButton>
+              </Col>
+              <Col md={6}>
+                <DropdownButton title={direction ? direction : "Direction"} variant="outline-secondary">
+                  <Dropdown.Item onClick={() => handleDirectionChange('Asc')}>Asc</Dropdown.Item>
+                  <Dropdown.Item onClick={() => handleDirectionChange('Desc')}>Desc</Dropdown.Item>
+                </DropdownButton>
+              </Col>
+            </Row>
+          </Col>
+          <Col md={3} className="mb-3 page-size-container-center">
+            <SearchBar onSearch={handleSearch} defaultValue={searchQuery} />
+          </Col>
+          <Col md={2} className="mb-3">
+            <Button variant="secondary" onClick={handleReset}>Reset</Button>
+          </Col>
+          <Col md={4} className="page-size-container-right d-flex justify-content-end">
+            <PageDropdown
+              noOfPages={noOfPages}
+              currentPage={currentPage}
+              setPageNo={handlePageChange}
+            />
+            <PageSize size={size} setSize={handleSizeChange} />
+          </Col>
+        </Row>
             <div>
               <Row className="m-5">
                 <TableData data={data} fetchData={fetchData} status={"Withdrawal"} activateRow={acceptWithdrawal} deactivateRow={rejectWithdrawal}/>

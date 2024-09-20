@@ -74,11 +74,12 @@ public class ClaimController {
     @GetMapping("/claims")
     @PreAuthorize("hasRole('ADMIN') or hasRole('EMPLOYEE')")
     @Operation(summary = "Get all claims with pagination and sorting")
-    public ResponseEntity<Page<ClaimResponse>> getAllClaims(@RequestParam(defaultValue = "0") int page,
-                                          @RequestParam(defaultValue = "10") int size,
-                                          @RequestParam(defaultValue = "claimId") String sortBy,
-                                          @RequestParam(defaultValue = "asc") String direction) {
-        return new ResponseEntity<>(service.getAllClaims(PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sortBy))), HttpStatus.OK);
+    public ResponseEntity<Page<ClaimResponse>> getAllClaims(@RequestParam(name="page", defaultValue = "0") int page,
+                                          @RequestParam(name="size", defaultValue = "10") int size,
+                                          @RequestParam(name="sortBy", defaultValue = "claimId") String sortBy,
+                                          @RequestParam(name="direction", defaultValue = "asc") String direction,
+    									 @RequestParam(name="searchQuery", defaultValue="") String searchQuery){
+        return new ResponseEntity<>(service.getAllClaims(searchQuery, PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sortBy))), HttpStatus.OK);
     }
 
     @PutMapping("/claims/{claimId}/approve")

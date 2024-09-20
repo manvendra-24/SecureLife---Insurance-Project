@@ -4,17 +4,14 @@ import { Form, InputGroup } from 'react-bootstrap';
 const PageSize = ({ size, setSize }) => {
     const handleChange = (event) => {
         const value = parseInt(event.target.value, 10);
-        if (!isNaN(value) && value > 0) {
-            setSize(value);
-        }
+        setSize(value);
     };
 
     return (
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
             <InputGroup>
                 <InputGroup.Text style={{ marginRight: '0.5rem' }}>Size:</InputGroup.Text>
-                <Form.Control
-                    type="number"
+                <Form.Select
                     id="pageSize"
                     style={{
                         width: '80px',
@@ -23,8 +20,13 @@ const PageSize = ({ size, setSize }) => {
                     }}
                     value={size}
                     onChange={handleChange}
-                    min="1"
-                />
+                >
+                    <option value={5}>5</option>
+                    <option value={10}>10</option>
+                    <option value={15}>15</option>
+                    <option value={20}>20</option>
+                    <option value={25}>25</option>
+                </Form.Select>
             </InputGroup>
         </div>
     );

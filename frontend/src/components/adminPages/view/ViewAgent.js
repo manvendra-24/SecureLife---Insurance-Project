@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, DropdownButton, Dropdown, Button } from 'react-bootstrap';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
+import jsPDF from 'jspdf';  
+import 'jspdf-autotable';   
+
 import { verifyAdmin } from '../../../services/AuthService';
 import { getAllAgents, activateAgent, deactivateAgent, registerAgent } from '../../../services/AdminService';
 
@@ -10,7 +13,7 @@ import Pagination from '../../../sharedComponents/Pagination';
 import PageSize from '../../../sharedComponents/PageSize';
 import TableData from '../../../sharedComponents/TableData2';
 import PageDropdown from '../../../sharedComponents/PageDropDown';
-import NewToast,{  showToast } from '../../../sharedComponents/NewToast';
+import NewToast,{ showToast } from '../../../sharedComponents/NewToast';
 import BackButton from '../../../sharedComponents/BackButton';
 import Loader from '../../../sharedComponents/Loader';
 
@@ -159,7 +162,7 @@ const ViewAgent = () => {
   };
 
   const handleSortChange = (newSort) =>{
-    if(sortBy != newSort){
+    if(sortBy !== newSort){
       setLoading(true);
       setSearchParams({
         searchQuery,
@@ -169,9 +172,10 @@ const ViewAgent = () => {
         direction
       });
     } 
-  }
+  };
+
   const handleDirectionChange = (newDirection) => {
-    if(direction != newDirection){
+    if(direction !== newDirection){
       setLoading(true);
       setSearchParams({
         searchQuery,
@@ -181,7 +185,7 @@ const ViewAgent = () => {
         direction:newDirection
       });  
     }
-  }
+  };
 
   const sortOptions = [
     { label: 'Agent ID', value: 'agentId' },
@@ -216,6 +220,48 @@ const ViewAgent = () => {
     }
   };
 
+  
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+
+    doc.text('Agent Report', 14, 16);
+  
+    
+    doc.autoTable({
+      startY: 22,
+      head: [['Agent ID', 'Name', 'Username', 'Address', 'Active', 'Email']],
+      body: data.map(agent => [
+        agent.agentId,
+        agent.name,
+        agent.username,
+        agent.address,
+        agent.active ? 'YES' : 'NO',
+        agent.email,
+      ]),
+      columnStyles: {
+        0: { cellWidth: 25 },  
+        1: { cellWidth: 30 },  
+        2: { cellWidth: 25 },  
+        3: { cellWidth: 45 },  
+        4: { cellWidth: 20 },  
+        5: { cellWidth: 50 }, 
+      },
+      styles: {
+        fontSize: 9,  
+        cellPadding: 3,  
+      },
+      headStyles: {
+        fillColor: [41, 128, 185], 
+        textColor: [255, 255, 255], 
+      },
+      theme: 'grid',  
+    });
+  
+  
+    doc.save('Agent_Report.pdf');
+  };
+  
+
   return (
     <Container fluid className="bg-light text-dark d-flex flex-column min-vh-100 px-0">
       <Header/>
@@ -223,10 +269,11 @@ const ViewAgent = () => {
         <Container fluid className="py-5" style={{backgroundColor:'rgba(230, 242, 255, 0.5)'}}>
           <Row className="m-5">
             <Col md={8}>
-            <h2>Agents Data</h2>
+              <h2>Agents Data</h2>
             </Col>
             <Col md={4} style={{textAlign:'right'}}>
-            <NewButton text={"Add New Agent"} handleButton={handleShowModal}/>
+              <Button variant="success" className="me-3" onClick={downloadPDF}>Download PDF</Button> 
+              <NewButton text={"Add New Agent"} handleButton={handleShowModal}/>
             </Col>
           </Row>
           <Row className="m-5">
@@ -262,10 +309,10 @@ const ViewAgent = () => {
               </Row>
               <Row className="m-5">
                 <Col md={6}>
-                <Pagination noOfPages={noOfPages} currentPage={currentPage} setPageNo={handlePageChange} />
+                  <Pagination noOfPages={noOfPages} currentPage={currentPage} setPageNo={handlePageChange} />
                 </Col>
                 <Col md={6} style={{textAlign:'right'}}>
-                <BackButton />
+                  <BackButton />
                 </Col>
               </Row>
             </div>

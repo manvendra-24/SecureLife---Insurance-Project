@@ -1,52 +1,77 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { toast } from 'react-toastify';
-import {registerPolicy} from '../../services/CustomerService'
-import { successToast,errorToast } from '../../sharedComponents/MyToast';
-const RegisterPolicyModal = ({ show, handleClose, planId, minTerm, maxTerm, minAge, maxAge,minInvestment,maxInvestment,handleSuccess}) => {
+import { registerPolicy } from '../../services/CustomerService';
+import { successToast, errorToast } from '../../sharedComponents/MyToast';
+import { isAlphaNumNoSpace} from '../../utils/helpers/Validation';
+
+
+const RegisterPolicyModal = ({ show, handleClose, planId, minTerm, maxTerm, minAge, maxAge, minInvestment, maxInvestment, customerAge, handleSuccess }) => {
   const [policyTerm, setPolicyTerm] = useState('');
   const [totalInvestmentAmount, setTotalInvestmentAmount] = useState('');
   const [paymentInterval, setPaymentInterval] = useState('Quarterly');
-  const [agentId, setAgentId] = useState(''); 
-  const [loading, setLoading] = useState(false); 
+  const [agentId, setAgentId] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  useEffect(() => {
+    validateForm();
+  }, [policyTerm, totalInvestmentAmount, agentId]);
+
+  const validateForm = () => {
+    const isValid = 
+      policyTerm &&
+      totalInvestmentAmount &&
+      policyTerm >= minTerm && 
+      policyTerm <= maxTerm &&
+      totalInvestmentAmount >= minInvestment &&
+      totalInvestmentAmount <= maxInvestment &&
+      (!agentId || !isAlphaNumNoSpace(agentId));
+    setIsFormValid(isValid);
+  };
+
+  const handleChange = (e, setter) => {
+    setter(e.target.value);
+  };
+ 
 
   const handleSubmit = async () => {
-    if (!policyTerm || !totalInvestmentAmount) {
-      toast.error('Please fill out all the required fields.');
+    setLoading(true);
+    if (customerAge < minAge || customerAge > maxAge) {
+      errorToast('Sorry, you are not eligible for this policy.');
+      setLoading(false); 
       return;
     }
 
-    
-    if (policyTerm < minTerm || policyTerm > maxTerm) {
-      errorToast(`Policy term must be between ${minTerm} and ${maxTerm} years.`);
+    if (!isFormValid) {
+      toast.error('Please correct the errors in the form.');
+      setLoading(false); 
       return;
     }
-    if(totalInvestmentAmount <minInvestment || totalInvestmentAmount > maxInvestment){
-         errorToast(`policy Investment must be between ${minInvestment} and ${maxInvestment}`)
-    }
 
-   
     const policyRequest = {
       plan_id: planId,
       policyTerm: parseInt(policyTerm),
       totalInvestmentAmount: parseInt(totalInvestmentAmount),
       paymentInterval,
-      agent_id: agentId || null, 
+      agent_id: agentId || null,
     };
 
-    console.log('Policy Request:', policyRequest);
-
     try {
-      setLoading(true); 
-      const response = await registerPolicy(policyRequest); 
-      handleSuccess();
-      console.log('API Response:', response);
-      setLoading(false); 
-      handleClose(); 
-    } catch (error) {
-      console.error('Error registering policy:', error);
-      toast.error('Failed to register policy. Please try again.');
+      
+      await registerPolicy(policyRequest);
       setLoading(false);
+      handleClose(); 
+      handleSuccess(); 
+      
+    } catch (error) {
+
+      setLoading(false); 
+      console.log(error.specificMessage);
+      handleClose(); 
+       errorToast(error.specificMessage);
+       
+   
     }
   };
 
@@ -66,11 +91,12 @@ const RegisterPolicyModal = ({ show, handleClose, planId, minTerm, maxTerm, minA
           <Form.Control
             type="number"
             value={policyTerm}
-            onChange={(e) => setPolicyTerm(e.target.value)}
+            onChange={(e) => handleChange(e, setPolicyTerm)}
+            isInvalid={policyTerm && (policyTerm < minTerm || policyTerm > maxTerm)}
           />
-          <Form.Text className="text-muted">
+          <Form.Control.Feedback type="invalid">
             Policy term must be between {minTerm} and {maxTerm} years.
-          </Form.Text>
+          </Form.Control.Feedback>
         </Form.Group>
 
         <Form.Group controlId="totalInvestmentAmount">
@@ -78,11 +104,12 @@ const RegisterPolicyModal = ({ show, handleClose, planId, minTerm, maxTerm, minA
           <Form.Control
             type="number"
             value={totalInvestmentAmount}
-            onChange={(e) => setTotalInvestmentAmount(e.target.value)}
+            onChange={(e) => handleChange(e, setTotalInvestmentAmount)}
+            isInvalid={totalInvestmentAmount && (totalInvestmentAmount < minInvestment || totalInvestmentAmount > maxInvestment)}
           />
-          <Form.Text className="text-muted">
-            Policy Investment Amount must be between ₹{minInvestment} and ₹{maxInvestment} .
-          </Form.Text>
+          <Form.Control.Feedback type="invalid">
+            Policy Investment Amount must be between ₹{minInvestment} and ₹{maxInvestment}.
+          </Form.Control.Feedback>
         </Form.Group>
 
         <Form.Group controlId="paymentInterval">
@@ -103,9 +130,13 @@ const RegisterPolicyModal = ({ show, handleClose, planId, minTerm, maxTerm, minA
           <Form.Control
             type="text"
             value={agentId}
-            onChange={(e) => setAgentId(e.target.value)}
+            onChange={(e) => handleChange(e, setAgentId)}
+            isInvalid={agentId && isAlphaNumNoSpace(agentId)}
             placeholder="Enter agent ID (optional)"
           />
+          <Form.Control.Feedback type="invalid">
+            Enter valid Agent Id
+          </Form.Control.Feedback>
         </Form.Group>
 
         <Form.Text className="text-muted">
@@ -116,7 +147,7 @@ const RegisterPolicyModal = ({ show, handleClose, planId, minTerm, maxTerm, minA
         <Button variant="secondary" onClick={handleClose} disabled={loading}>
           Close
         </Button>
-        <Button variant="primary" onClick={handleSubmit} disabled={loading}>
+        <Button variant="primary" onClick={handleSubmit} disabled={loading || !isFormValid}>
           {loading ? 'Registering...' : 'Register Policy'}
         </Button>
       </Modal.Footer>

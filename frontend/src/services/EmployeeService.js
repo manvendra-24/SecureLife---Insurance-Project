@@ -245,19 +245,24 @@ export const getCustomerById = async (customerId) => {
     throw error;
   }
 };
-export const getCommissionByAgentId = async (agentId, page = 0, size = 5, sortBy = 'policyId', direction = 'asc') => {
+export const getCommissionByAgentId = async (agentId, params) => {
   const token = localStorage.getItem('token');  
   const response = await axios.get(`http://localhost:8081/SecureLife.com/agent/${agentId}/commissions`, {
+    params,
     headers: {
       Authorization: `Bearer ${token}`,
-    },
-    params: {
-      page,
-      size,
-      sortBy,
-      direction,
     },
   });
 
   return response.data;  
+};
+export const getPoliciesByCustomerId = async (customerId, params) => {
+  const token = localStorage.getItem('token');
+  const response = await axios.get(`http://localhost:8081/SecureLife.com/customer/${customerId}/policies`, {
+    params,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
 };

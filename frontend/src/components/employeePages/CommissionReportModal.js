@@ -3,6 +3,8 @@ import { Modal, Button, Form, Table } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { getAllAgents } from '../../services/EmployeeService';
 import { getCommissionByAgentId } from '../../services/EmployeeService';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const CommissionReportModal = ({ show, handleClose }) => {
   const [agents, setAgents] = useState([]);
@@ -13,9 +15,9 @@ const CommissionReportModal = ({ show, handleClose }) => {
   useEffect(() => {
     const fetchAgents = async () => {
       try {
-        const params = { page: 0, size: 100 };  
+        const params = { page: 0, size: 100 };
         const response = await getAllAgents(params);
-        setAgents(response.content);  
+        setAgents(response.content);
       } catch (error) {
         toast.error('Error fetching agents');
       }
@@ -32,8 +34,9 @@ const CommissionReportModal = ({ show, handleClose }) => {
 
     try {
       setLoading(true);
-      const response = await getCommissionByAgentId(selectedAgent);
-      setCommissions(response.content);  
+      const params = { page: 0, size: 100};
+      const response = await getCommissionByAgentId(selectedAgent, params);
+      setCommissions(response.content);
       setLoading(false);
     } catch (error) {
       toast.error("Error fetching commissions");
@@ -41,8 +44,34 @@ const CommissionReportModal = ({ show, handleClose }) => {
     }
   };
 
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+
+    
+    doc.text('Commission Report', 14, 16);
+
+   
+    doc.autoTable({
+      startY: 22,
+      head: [['Policy ID', 'Plan ID', 'Start Date', 'End Date', 'Policy Term', 'Total Investment', 'Payment Interval', 'Commission']],
+      body: commissions.map(commission => [
+        commission.policyId,
+        commission.plan_id,
+        new Date(commission.startDate).toLocaleDateString(),
+        new Date(commission.endDate).toLocaleDateString(),
+        commission.policyTerm,
+        commission.totalInvestmentAmount,
+        commission.paymentInterval,
+        commission.commission,
+      ]),
+    });
+
+    
+    doc.save(`Commission_Report_${selectedAgent}.pdf`);
+  };
+
   return (
-    <Modal show={show} onHide={handleClose} size="lg"> 
+    <Modal show={show} onHide={handleClose} size="lg">
       <Modal.Header closeButton>
         <Modal.Title>Select Agent for Commission Report</Modal.Title>
       </Modal.Header>
@@ -58,7 +87,6 @@ const CommissionReportModal = ({ show, handleClose }) => {
             ))}
           </Form.Control>
         </Form.Group>
-
         {commissions.length > 0 && (
           <Table striped bordered hover className="mt-4">
             <thead>
@@ -91,10 +119,17 @@ const CommissionReportModal = ({ show, handleClose }) => {
         )}
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>Close</Button>
+        <Button variant="secondary" onClick={handleClose}>
+          Close
+        </Button>
         <Button variant="primary" onClick={handleGenerateReport} disabled={loading}>
           {loading ? 'Loading...' : 'Generate Report'}
         </Button>
+        {commissions.length > 0 && (
+          <Button variant="success" onClick={downloadPDF}>
+            Download PDF
+          </Button>
+        )}
       </Modal.Footer>
     </Modal>
   );

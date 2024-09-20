@@ -14,4 +14,10 @@ public interface ClaimRepository extends JpaRepository<Claim, Long>{
 	 @Query("SELECT c FROM Claim c WHERE c.policy.customer.customerId = :customerId")
 	    Page<Claim> findAllByCustomerId(@Param("customerId") String customerId, Pageable pageable);
 
+	 
+	 @Query("SELECT c FROM Claim c " +
+			 "JOIN c.policy p " + 
+			 "WHERE CONCAT(p.customer.customerId, ' ', p.policyId, ' ', c.claimId) LIKE %:searchQuery% ")
+	Page<Claim> findAllWithSearchQuery(String searchQuery, Pageable pageable);
+
 }

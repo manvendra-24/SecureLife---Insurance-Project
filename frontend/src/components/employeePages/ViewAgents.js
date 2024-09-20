@@ -2,6 +2,9 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Container, Row, Col, DropdownButton, Dropdown, Button } from 'react-bootstrap';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
+import jsPDF from 'jspdf'; 
+import 'jspdf-autotable'; 
+
 import { verifyEmployee } from '../../services/AuthService';
 import { getAllAgents, toggleAgentStatus } from '../../services/EmployeeService';
 
@@ -20,7 +23,6 @@ import Footer from '../layout/Footer';
 const ViewAgentsTable = () => {
   const [isEmployee, setIsEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [data, setData] = useState([]);
   const [noOfPages, setNoOfPages] = useState(0);
   const [sortBy, setSortBy] = useState('');  
@@ -67,7 +69,6 @@ const ViewAgentsTable = () => {
       })
       .catch((error) => {
         console.error('There was an error fetching the agents!', error);
-        setError('Error in getting agents');
         setLoading(false);
       });
   }, [searchQuery, currentPage, size, sortBy, direction]);
@@ -79,10 +80,50 @@ const ViewAgentsTable = () => {
   }, [fetchData, isEmployee]);
 
   
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+
+    doc.text('Agent Report', 14, 16);
+  
+    
+    doc.autoTable({
+      startY: 22,
+      head: [['Agent ID', 'Name', 'Username', 'Address', 'Active', 'Email']],
+      body: data.map(agent => [
+        agent.agentId,
+        agent.name,
+        agent.username,
+        agent.address,
+        agent.active ? 'YES' : 'NO',
+        agent.email,
+      ]),
+      columnStyles: {
+        0: { cellWidth: 25 },  
+        1: { cellWidth: 30 },  
+        2: { cellWidth: 25 },  
+        3: { cellWidth: 45 },  
+        4: { cellWidth: 20 },  
+        5: { cellWidth: 50 }, 
+      },
+      styles: {
+        fontSize: 9,  
+        cellPadding: 3,  
+      },
+      headStyles: {
+        fillColor: [41, 128, 185], 
+        textColor: [255, 255, 255], 
+      },
+      theme: 'grid',  
+    });
+  
+  
+    doc.save('Agent_Report.pdf');
+  };
+  
+  
+
   const handleSearch = (newSearchQuery) => {
     setLoading(true);
-
-   
     setSearchParams({
       searchQuery: newSearchQuery,
       page: currentPage,
@@ -92,12 +133,9 @@ const ViewAgentsTable = () => {
     });
   };
 
-  
   const handleSortChange = (newSortBy) => {
     setSortBy(newSortBy);  
     setLoading(true);
-
-   
     setSearchParams({
       searchQuery,  
       page: currentPage,
@@ -107,12 +145,9 @@ const ViewAgentsTable = () => {
     });
   };
 
-  
   const handleDirectionChange = (newDirection) => {
     setDirection(newDirection); 
     setLoading(true);
-
-    
     setSearchParams({
       searchQuery,  
       page: currentPage,
@@ -122,16 +157,15 @@ const ViewAgentsTable = () => {
     });
   };
 
-  
   const handleReset = () => {
     setSortBy('');
     setDirection('');
     setSearchParams({
-      searchQuery:'', 
-      page: 1,          
-      size: 5,          
-      sortBy: '',      
-      direction: '',    
+      searchQuery: '', 
+      page: 1,
+      size: 5,
+      sortBy: '',
+      direction: '',
     });
   };
 
@@ -159,7 +193,7 @@ const ViewAgentsTable = () => {
 
   const handleToggleStatus = async (agentId, currentStatus) => {
     try {
-      await toggleAgentStatus(agentId, !currentStatus); 
+      await toggleAgentStatus(agentId, !currentStatus);
       successToast(`Agent has been ${!currentStatus ? 'activated' : 'deactivated'} successfully!`);
       fetchData();
     } catch (error) {
@@ -175,7 +209,6 @@ const ViewAgentsTable = () => {
     return <Loader />;
   }
 
-
   const sortOptions = [
     { label: 'Agent ID', value: 'agentId' },
     { label: 'Name', value: 'name' },
@@ -187,10 +220,16 @@ const ViewAgentsTable = () => {
       
       <div className="content-container flex-grow-1">
         <Container className="mt-5">
-          <h2>Agents Data</h2>
+          <Row className="mb-3 align-items-center">
+            <Col md={8}>
+              <h2>Agents Data</h2>
+            </Col>
+            <Col md={4} style={{ textAlign: 'right' }}> {/* Top right corner */}
+              <Button variant="success" onClick={downloadPDF}>Download PDF</Button>
+            </Col>
+          </Row>
           <Row className="mb-3 align-items-center">
             <Col md={1} className='mb-3'>
-             
               <DropdownButton title={sortBy ? sortBy : "Sort By"} variant="outline-secondary">
                 {sortOptions.map(option => (
                   <Dropdown.Item key={option.value} onClick={() => handleSortChange(option.value)}>
@@ -200,18 +239,15 @@ const ViewAgentsTable = () => {
               </DropdownButton>
             </Col>
             <Col md={1} className='mb-3'>
-              
               <DropdownButton title={direction ? direction : "Direction"} variant="outline-secondary">
                 <Dropdown.Item onClick={() => handleDirectionChange('asc')}>Asc</Dropdown.Item>
                 <Dropdown.Item onClick={() => handleDirectionChange('desc')}>Desc</Dropdown.Item>
               </DropdownButton>
             </Col>
-            
             <Col md={4}>
               <SearchBar onSearch={handleSearch} defaultValue={searchQuery} />
             </Col>
             <Col md={2} className='mb-3'>
-              
               <Button variant="secondary" onClick={handleReset}>Reset</Button>
             </Col>
             <Col md={4} className="d-flex justify-content-end">
@@ -220,19 +256,15 @@ const ViewAgentsTable = () => {
             </Col>
           </Row>
           <Row>
-          {data.length > 0 && (
-            <div>
-
+            {data.length > 0 && (
               <TableData
                 data={data}
                 onEdit={handleEdit}
-                onToggleStatus={handleToggleStatus} 
+                onToggleStatus={handleToggleStatus}
               />
-              
-            </div>
-          )}
+            )}
           </Row>
-          <Row >
+          <Row>
             <Col md={6}>
               <Pagination noOfPages={noOfPages} currentPage={currentPage} setPageNo={handlePageChange} />
             </Col>
@@ -240,10 +272,8 @@ const ViewAgentsTable = () => {
               <BackButton />
             </Col>
           </Row>
-          
         </Container>
       </div>
-      
       <Footer />
     </Container>
   );
