@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
-import { FaFileAlt, FaQuestionCircle, FaUpload, FaShieldAlt } from 'react-icons/fa'; // Importing icons
+import { FaFileAlt, FaQuestionCircle, FaUpload, FaShieldAlt, FaClipboardList } from 'react-icons/fa';
 
-import CustomerHeader from '../layout/CustomerHeader';
+import Header from '../layout/Header';
 import Footer from '../layout/Footer';
 
 import DashboardCard from '../../sharedComponents/DashboardCard';
@@ -13,6 +13,8 @@ import QueryModal from './CustomerQueryForm';
 import DocumentUploadModal from './DocumentUploadModal';
 import { successToast, errorToast } from '../../sharedComponents/MyToast';
 import { verifyCustomer, getProfile } from '../../services/AuthService';
+import InsuranceTypesModal from './InsuranceTypeModal';
+
 
 const CustomerDashboard = () => {
   const navigate = useNavigate();
@@ -21,6 +23,8 @@ const CustomerDashboard = () => {
   const [username, setUsername] = useState('');
   const [showQueryModal, setShowQueryModal] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showInsuranceModal, setShowInsuranceModal] = useState(false);
+
 
   useEffect(() => {
     const checkCustomerStatus = async () => {
@@ -87,10 +91,16 @@ const CustomerDashboard = () => {
   const handleCloseUploadModal = () => {
     setShowUploadModal(false);
   };
+  const handleShowInsuranceModal = () => {
+    setShowInsuranceModal(true);
+  }
+  const handleCloseInsuranceModal = () => {
+    setShowInsuranceModal(false);
+  }
 
   return (
     <Container fluid className="d-flex flex-column min-vh-100 px-0">
-      <CustomerHeader />
+      <Header />
       <Container fluid className="py-5 px-5" style={{ backgroundColor: 'rgba(230, 242, 255, 0.5)' }}>
         <Row className="px-5 mb-5">
           <Col xs={12} md={12}>
@@ -101,6 +111,15 @@ const CustomerDashboard = () => {
           </Col>
         </Row>
         <Row className="px-5">
+        <Col md={4}>
+            <DashboardCard
+              icon={<FaClipboardList />}
+              title="Explore Schemes"
+              text="Explore Insurance Scheme"
+              handleButton={handleShowInsuranceModal}
+              buttonText="View Schemes"
+            />
+          </Col>
           <Col md={4}>
             <DashboardCard
               icon={<FaShieldAlt />}
@@ -110,15 +129,7 @@ const CustomerDashboard = () => {
               buttonText="View Policy"
             />
           </Col>
-          <Col md={4}>
-            <DashboardCard
-              icon={<FaQuestionCircle />}
-              title="Write Query"
-              text="Submit a query for support"
-              handleButton={handleWriteQuery}
-              buttonText="Write Query"
-            />
-          </Col>
+          
           <Col md={4}>
             <DashboardCard
               icon={<FaFileAlt />} 
@@ -134,16 +145,25 @@ const CustomerDashboard = () => {
             <DashboardCard
               icon={<FaUpload />} 
               title="Upload Documents"
-              text="Upload important documents like Aadhaar and PAN"
+              text="Upload important documents"
               handleButton={handleShowUploadModal}
               buttonText="Upload Documents"
+            />
+          </Col>
+          <Col md={4}>
+            <DashboardCard
+              icon={<FaQuestionCircle />}
+              title="Write Query"
+              text="Submit a query for support"
+              handleButton={handleWriteQuery}
+              buttonText="Write Query"
             />
           </Col>
         </Row>
       </Container>
       <NewToast />
       <Footer />
-
+      <InsuranceTypesModal show={showInsuranceModal} handleClose={handleCloseInsuranceModal} />
       <QueryModal show={showQueryModal} handleClose={handleCloseQueryModal} />
       <DocumentUploadModal show={showUploadModal} handleClose={handleCloseUploadModal} />
     </Container>

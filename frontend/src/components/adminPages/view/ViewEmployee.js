@@ -202,8 +202,10 @@ const ViewEmployee = () => {
       await registerEmployee(formData);
       setLoading(false);
       showToast('Employee registered successfully', 'success');
-      handleCloseModal();
-      fetchData();
+      setTimeout(()=>{
+        handleCloseModal();
+        fetchData();
+      })
     } catch (error) {
       setLoading(false);
       showToast('Error registering employee', 'error');

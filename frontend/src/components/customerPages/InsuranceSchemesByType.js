@@ -3,22 +3,17 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getInsuranceSchemesByTypeId } from '../../services/CustomerService';
 import { Container, Row, Card, Carousel, Button } from 'react-bootstrap';
 import defaultImage from '../../assets/images/fasttrack.png'; 
-import CustomerHeader from '../layout/CustomerHeader';
 import Footer from '../layout/Footer';
 import { verifyCustomer } from '../../services/AuthService'; 
 import { ToastContainer } from 'react-toastify';
 import { successToast, errorToast } from '../../sharedComponents/MyToast'; 
+import Header from '../layout/Header';
 
 const schemeImages = {
-  FastTrack: defaultImage, 
-  OldAgeScheme: require('../../assets/images/oldagescheme.png'),
+  "Old Age Scheme": require('../../assets/images/oldagescheme.png'),
 };
 
-const schemeDescriptions = {
-  FastTrack: 'The FastTrack scheme offers a high return with a shorter maturity period, perfect for those looking for quick financial growth. It is designed to accommodate those who are risk-takers with a goal for rapid financial expansion. This scheme focuses on maximizing returns in a short period, ideal for business owners and young professionals looking to grow their wealth. Additionally, the scheme provides flexibility in payments and coverage, making it highly adaptable to market conditions. Join this plan today and see your investment grow quickly over the years.',
-  
-  OldAgeScheme: 'The Old Age Scheme ensures financial stability during retirement, providing a regular stream of income for essential expenses. With guaranteed payouts and a focus on long-term care, this scheme is perfect for those looking to secure their golden years without any financial burden. It offers a sense of comfort and peace knowing that you are financially prepared for healthcare, housing, and leisure activities. The scheme also comes with added benefits such as healthcare packages and community support services. It’s more than just insurance; it’s a lifetime of peace and care for your future needs.'
-};
+
 
 const InsuranceSchemesByType = () => {
   const { typeId } = useParams();
@@ -65,8 +60,8 @@ const InsuranceSchemesByType = () => {
   };
 
   return (
-    <Container fluid className="px-0">
-      <CustomerHeader />
+    <Container fluid className="d-flex flex-column min-vh-100 px-0">
+      <Header />
       <Container fluid className="px-5 py-5" style={{ backgroundColor: 'rgba(230, 242, 255, 0.5)' }}>
         <Row className="justify-content-center py-5">
           <h2 className="text-center">Insurance Schemes</h2>
@@ -89,7 +84,7 @@ const InsuranceSchemesByType = () => {
                     <Card.Body>
                       <Card.Title>{scheme.name}</Card.Title>
                       <Card.Text>
-                        {schemeDescriptions[scheme.name] || scheme.description || 'No description available.'}
+                        { scheme.description || 'No description available.'}
                       </Card.Text>
                       <Button variant="primary" onClick={() => handleExploreMore(scheme.insuranceSchemeId)}>
                         Explore More

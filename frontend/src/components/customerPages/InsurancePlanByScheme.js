@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getInsurancePlanBySchemeId } from '../../services/CustomerService'; 
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
-import CustomerHeader from '../layout/CustomerHeader';
+import Header from '../layout/Header';
 import Footer from '../layout/Footer';
 import RegisterPolicyModal from './RegisterPolicyModal';
 import { successToast, errorToast } from '../../sharedComponents/MyToast';
 import BackButton from '../../sharedComponents/BackButton';
 import { verifyCustomer } from '../../services/AuthService'; 
+import NewToast from '../../sharedComponents/NewToast';
+import { ToastContainer } from 'react-toastify';
 
 const InsurancePlanByScheme = () => {
   const { schemeId } = useParams();
@@ -25,7 +27,6 @@ const InsurancePlanByScheme = () => {
           navigate('/SecureLife.com/login');
         }
       } catch (error) {
-        console.error('Error during customer verification:', error);
         navigate('/SecureLife.com/login');
       }
     };
@@ -38,10 +39,8 @@ const InsurancePlanByScheme = () => {
       const fetchPlan = async () => {
         try {
           const response = await getInsurancePlanBySchemeId(schemeId);
-          console.log('Fetched Plan:', response.content[0]); 
           setPlan(response.content[0]); 
         } catch (error) {
-          console.error('Error fetching plan:', error);
           errorToast('Failed to fetch insurance plan details.');
         }
       };
@@ -60,14 +59,10 @@ const InsurancePlanByScheme = () => {
     setShowModal(false); 
   };
 
-  const handleSuccess = () => {
-    successToast('Policy registered successfully!');
-    setShowModal(false);
-  };
 
   return (
     <Container fluid className="px-0">
-      <CustomerHeader />
+      <Header />
       <Container fluid className="px-5 py-5" style={{ backgroundColor: 'rgba(230, 242, 255, 0.5)' }}>
         <Row className="justify-content-center py-5">
           <h2 className="text-center">Insurance Plan Details</h2>
@@ -116,9 +111,9 @@ const InsurancePlanByScheme = () => {
           maxAge={plan.maximumAge}
           minInvestment={plan.minimumInvestmentAmount}
           maxInvestment={plan.maximumInvestmentAmount}
-          handleSuccess={handleSuccess}
         />
       )}
+      <ToastContainer/>
     </Container>
   );
 };

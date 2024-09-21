@@ -17,7 +17,7 @@ const AddEmployee = ({ show, handleClose, handleSave }) => {
   const validate = () => {
     let tempErrors = {};
     tempErrors.username = required(employeeData.username) || isAlphaNumNoSpace(employeeData.username) || checkSize(employeeData.username, 4, 50);
-    tempErrors.password = required(employeeData.password) || checkSize(employeeData.password, 6, 20);
+    tempErrors.password = required(employeeData.password) || checkSize(employeeData.password, 8, 20);
     tempErrors.email = required(employeeData.email) || isEmail(employeeData.email);
     tempErrors.phoneNumber = required(employeeData.phoneNumber) || isTenDigits(employeeData.phoneNumber);
     tempErrors.address = required(employeeData.address) || checkSize(employeeData.address, 0, 255);

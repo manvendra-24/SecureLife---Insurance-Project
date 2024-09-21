@@ -117,6 +117,10 @@ public class StateService implements IStateService {
         State state = stateRepository.findById(id).orElse(null);
         if (state != null) {
             if (!state.isActive()) {
+            	List<City> cities = state.getCities();
+            	for(City city:cities) {
+            		city.setActive(true);
+            	}
                 state.setActive(true);
                 stateRepository.save(state);
                 logger.info("State activated successfully with ID: {}", id);

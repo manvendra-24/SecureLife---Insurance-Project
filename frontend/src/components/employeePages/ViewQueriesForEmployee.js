@@ -123,6 +123,7 @@ const ViewQueriesForEmployee = () => {
         )}
       </Container>
       <Footer/>
+      <NewToast/>
     </Container>
   );
 };

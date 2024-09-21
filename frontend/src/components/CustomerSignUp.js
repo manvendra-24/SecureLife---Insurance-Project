@@ -59,7 +59,7 @@ const CustomerSignUp = () => {
     newErrors.cityId = required(customerDetails.cityId);
     newErrors.username = required(customerDetails.username) || isAlphaNumNoSpace(customerDetails.username);
     newErrors.email = required(customerDetails.email) || isEmail(customerDetails.email);
-    newErrors.password = required(customerDetails.password) || checkSize(customerDetails.password, 6, 20);
+    newErrors.password = required(customerDetails.password) || checkSize(customerDetails.password, 8, 20);
 
     setErrors(newErrors);
 

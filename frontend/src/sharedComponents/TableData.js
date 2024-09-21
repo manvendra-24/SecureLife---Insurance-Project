@@ -106,35 +106,28 @@ const TableData = ({
 )}
 
             {isViewInstallmentTable && (
-              <Row>
+              <td>
                 {row.transactionStatus === 'SUCCESSFUL' ? (
-                  <td>
                     <Button
                       variant="success"
-                      className="mx-1"
+                      
                       onClick={() => downloadReceipt(row.transactionId)}
                     >
                       Receipt
                     </Button>
-                  </td>
                 ) : nextPendingInstallmentId === row.installmentId ? (
-                  <td>
                     <Button
                       variant="primary"
-                      className="mx-1"
                       onClick={() => onPayment(row.installmentAmount)}
                     >
                       Payment
                     </Button>
-                  </td>
                 ) : (
-                  <td>
-                    <Button variant="primary" className="mx-1" disabled>
+                    <Button variant="primary" disabled>
                       Payment
                     </Button>
-                  </td>
                 )}
-              </Row>
+              </td>
             )}
 
             {isCustomerTable && (

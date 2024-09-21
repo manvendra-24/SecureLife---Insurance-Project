@@ -1,6 +1,19 @@
 import axios from 'axios';
-import {UnAuthorizedError, InvalidCredentialError, InternalServerError, NotFoundError} from '../utils/errors/Error';
+import {UnAuthorizedError, ValidationError, InternalServerError, NotFoundError} from '../utils/errors/Error';
 
+const handleErrors = (error) => {
+  if (error.response) {
+    const { status } = error.response;
+    if (status === 404) {
+      throw new NotFoundError(error.response.data.message);
+    }else if (status === 401) {
+      throw new UnAuthorizedError("Unauthorized access");
+    }else if (status === 500) {
+      throw new InternalServerError("Internal Server Error");
+    }
+  }
+  throw new ValidationError(error?.response?.data?.message);
+};
 
 export const verifyAdmin = async (headers = {}) => {
     if(!localStorage.getItem('token')){
@@ -16,7 +29,7 @@ export const verifyAdmin = async (headers = {}) => {
         });
         return response.data;
     } catch (error) {
-        throw error;
+      handleErrors(error);
     }
 };
 
@@ -34,7 +47,7 @@ export const verifyCustomer = async (headers = {}) => {
         });
         return response.data;
     } catch (error) {
-        throw error;
+      handleErrors(error);
     }
 };
 
@@ -53,7 +66,8 @@ export const verifyAgent = async (headers = {}) => {
         });
         return response.data;
     } catch (error) {
-        throw error;
+      handleErrors(error);
+
     }
 };
 
@@ -72,7 +86,7 @@ export const verifyEmployee = async (headers = {}) => {
         });
         return response.data;
     } catch (error) {
-        throw error;
+      handleErrors(error);
     }
 };
 
@@ -91,13 +105,14 @@ export const loginService = async (usernameOrEmail, password) => {
     data.username = usernameOrEmail;
       return data;
     } catch (error) {
-        if(error.response && error.response.status === 400){
-            throw new InvalidCredentialError("Invalid Credentials");
-        }else if(error.response && error.response.status===404){
-          throw new NotFoundError("User not found");
-        }else {
-            throw new InternalServerError("Internal Server Error");
-        }
+      if (error.response.status === 400 && error.response.data.message === "BadCredentialsException") {
+        throw new ValidationError("Invalid Credentials");
+      }else if (error.response.status === 400 && error.response.data.message === "InternalAuthenticationServiceException") {
+        throw new ValidationError("User not found");
+      } else if(error.response.status === 401){
+        throw new ValidationError("User not found");
+      }
+      throw new ValidationError("Internal Server Error");
     }
   };
 
@@ -112,7 +127,7 @@ export const loginService = async (usernameOrEmail, password) => {
       });
       return response.data;
     } catch (error) {
-      throw error;
+      handleErrors(error);
     }
   };
   export const updateProfile = async (data) => {
@@ -126,7 +141,7 @@ export const loginService = async (usernameOrEmail, password) => {
       });
       return response.data;
     } catch (error) {
-      throw error;
+      handleErrors(error);
     }
   };
 
@@ -143,7 +158,7 @@ export const loginService = async (usernameOrEmail, password) => {
         });
         return response.data;
     } catch(error){
-        throw error;
+      handleErrors(error);
     }
   };
 
@@ -160,11 +175,10 @@ export const changePassword = async (token, changePasswordRequest) => {
     const response = await axios.put('http://localhost:8081/SecureLife.com/password/change', changePasswordRequest, config);
     return response.data; 
   } catch (error) {
-    throw new InternalServerError(error.response?.data?.message || 'Error changing password');  }
-};
+    handleErrors(error);
+  }
+  };
 
 
 
   
-
- 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Button } from 'react-bootstrap';
-import { isInRange } from '../../../utils/helpers/Validation'; // Adjust path as needed
-
+import { Modal, Form, Button, InputGroup } from 'react-bootstrap';
+import { isInRange } from '../../../utils/helpers/Validation'; 
+import { FaPercent } from 'react-icons/fa';
 const TaxSettingForm = ({ show, handleClose, handleSave, initialTaxPercentage }) => {
   const [taxPercentage, setTaxPercentage] = useState('');
   const [error, setError] = useState('');
@@ -19,7 +19,7 @@ const TaxSettingForm = ({ show, handleClose, handleSave, initialTaxPercentage })
     } else {
       setError('');
       handleSave({ taxPercentage });
-      setIsEditing(false); // Exit edit mode after saving
+      setIsEditing(false); 
     }
   };
 
@@ -32,6 +32,7 @@ const TaxSettingForm = ({ show, handleClose, handleSave, initialTaxPercentage })
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId="formTaxPercentage">
             <Form.Label>Tax Percentage</Form.Label>
+            <InputGroup>
             <Form.Control
               type="number"
               placeholder="Enter tax percentage"
@@ -40,9 +41,13 @@ const TaxSettingForm = ({ show, handleClose, handleSave, initialTaxPercentage })
               isInvalid={!!error}
               disabled={!isEditing}
             />
+            <InputGroup.Text>
+                <FaPercent /> 
+              </InputGroup.Text>
             <Form.Control.Feedback type="invalid">
               {error}
             </Form.Control.Feedback>
+            </InputGroup>
           </Form.Group>
           <div className="d-flex justify-content-end mt-3">
             {isEditing ? (

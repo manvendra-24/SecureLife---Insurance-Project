@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { submitQueryResponse } from '../../services/CustomerService';
-import { showToast } from '../../sharedComponents/NewToast';
+import NewToast, { showToast } from '../../sharedComponents/NewToast';
 
 const ResponseModal = ({ show, handleClose, selectedQuery, refreshQueries }) => {
   const [response, setResponse] = useState('');
@@ -11,8 +11,10 @@ const ResponseModal = ({ show, handleClose, selectedQuery, refreshQueries }) => 
       const responseBody = { response };
       await submitQueryResponse(selectedQuery.queryId, responseBody); 
       showToast('Response submitted successfully', 'success');
-      handleClose(); 
-      refreshQueries(); 
+      setTimeout(()=>{
+        handleClose(); 
+        refreshQueries(); 
+      }, 500);
     } catch (error) {
       showToast('Failed to submit response', 'error');
     }

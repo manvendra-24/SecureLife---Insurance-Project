@@ -25,7 +25,7 @@ const ClaimDocuments = () => {
   return (
     <Container fluid className="d-flex flex-column min-vh-100 px-0">
       <Header/>
-      <Container fluid className="py-5" style={{backgroundColor:'rgba(230, 242, 255, 0.5)'}}>
+      <Container fluid className="py-5 min-vh-100" style={{backgroundColor:'rgba(230, 242, 255, 0.5)'}}>
       <Row className="m-5">
       <h2 className="text-center">Claim Documents</h2>
       </Row>

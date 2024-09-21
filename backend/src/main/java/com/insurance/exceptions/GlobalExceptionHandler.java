@@ -97,8 +97,7 @@ public class GlobalExceptionHandler {
 		error.setMessage(exc.getClass().getSimpleName());
 		exc.printStackTrace();
 		error.setTimeStamp(LocalDateTime.now());
-		logger.error(exc.getMessage());
-
+		logger.error(exc.getMessage() + HttpStatus.BAD_REQUEST.value());
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 	

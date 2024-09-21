@@ -20,18 +20,25 @@ const Login = () => {
       const data = await loginService(email, password);
       if (data.role === 'ROLE_ADMIN') {
         successToast('Logged in successfully!');
-        navigate(`/SecureLife.com/admin/dashboard`);
+        setTimeout (()=>{
+          navigate(`/SecureLife.com/admin/dashboard`);
+        },500);
       } 
       else if (data.role === 'ROLE_CUSTOMER') {
         successToast('Logged in successfully!');
-        navigate('/SecureLife.com/customer/dashboard');
+        setTimeout(() => {
+          navigate('/SecureLife.com/customer/dashboard');
+        }, 500);
       } else if (data.role === 'ROLE_AGENT') {
         successToast('Logged in successfully!');
-        navigate('/SecureLife.com/agent/dashboard');
-      } 
-      else if (data.role === 'ROLE_EMPLOYEE') {
+        setTimeout(() => {
+          navigate('/SecureLife.com/agent/dashboard');
+        }, 500);
+      } else if (data.role === 'ROLE_EMPLOYEE') {
         successToast('Logged in successfully!');
-        navigate('/SecureLife.com/employee/dashboard');
+        setTimeout(() => {
+          navigate('/SecureLife.com/employee/dashboard');
+        }, 500);
       }
       else{
         errorToast("Redirecting issue");

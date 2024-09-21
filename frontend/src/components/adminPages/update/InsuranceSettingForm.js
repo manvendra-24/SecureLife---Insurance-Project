@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Button, InputGroup } from 'react-bootstrap';
-import { onlyPositive } from '../../../utils/helpers/Validation';
+import { isInRange} from '../../../utils/helpers/Validation';
 import { FaPercent } from 'react-icons/fa'; 
 
 const InsuranceSettingForm = ({ show, handleClose, handleSave, initialClaimDeduction, initialWithdrawalPenalty, initialLatePenalty }) => {
   const [claimDeduction, setClaimDeduction] = useState('');
   const [withdrawalPenalty, setWithdrawalPenalty] = useState('');
   const [latePenalty, setLatePenalty] = useState('');
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
   const [isEditable, setIsEditable] = useState(false);
 
   useEffect(() => {
@@ -23,14 +23,20 @@ const InsuranceSettingForm = ({ show, handleClose, handleSave, initialClaimDeduc
     const withdrawalPenaltyValue = Number(withdrawalPenalty);
     const latePenaltyValue = Number(latePenalty);
 
-    const claimDeductionError = onlyPositive(claimDeductionValue);
-    const withdrawalPenaltyError = onlyPositive(withdrawalPenaltyValue);
-    const latePenaltyError = onlyPositive(latePenaltyValue);
+    const claimDeductionError = isInRange(claimDeductionValue, 0, 20);
+    const withdrawalPenaltyError = isInRange(withdrawalPenaltyValue, 0, 50);
+    const latePenaltyError = isInRange(latePenaltyValue, 0, 20);
+
+    const newErrors = {
+      claimDeduction: claimDeductionError,
+      withdrawalPenalty: withdrawalPenaltyError,
+      latePenalty: latePenaltyError
+    };
 
     if (claimDeductionError || withdrawalPenaltyError || latePenaltyError) {
-      setError(`Claim Deduction Error: ${claimDeductionError}, Withdrawal Penalty Error: ${withdrawalPenaltyError}, Late Penalty Error: ${latePenaltyError}`);
+      setErrors(newErrors);
     } else {
-      setError('');
+      setErrors({});
       handleSave({ claimDeduction: claimDeductionValue, withdrawalPenalty: withdrawalPenaltyValue, latePenalty: latePenaltyValue });
       setIsEditable(false); 
     }
@@ -51,17 +57,18 @@ const InsuranceSettingForm = ({ show, handleClose, handleSave, initialClaimDeduc
                 placeholder="Enter claim deduction"
                 value={claimDeduction}
                 onChange={(e) => setClaimDeduction(e.target.value)}
-                isInvalid={!!error && error.includes('Claim Deduction Error')}
+                isInvalid={!!errors.claimDeduction}
                 disabled={!isEditable}
               />
               <InputGroup.Text>
                 <FaPercent /> 
               </InputGroup.Text>
+              <Form.Control.Feedback type="invalid">
+                {errors.claimDeduction}
+              </Form.Control.Feedback>
             </InputGroup>
-            <Form.Control.Feedback type="invalid">
-              {error && error.includes('Claim Deduction Error') ? error.split('Claim Deduction Error: ')[1] : ''}
-            </Form.Control.Feedback>
           </Form.Group>
+
           <Form.Group controlId="formWithdrawalPenalty">
             <Form.Label>Withdrawal Penalty</Form.Label>
             <InputGroup>
@@ -70,17 +77,18 @@ const InsuranceSettingForm = ({ show, handleClose, handleSave, initialClaimDeduc
                 placeholder="Enter withdrawal penalty"
                 value={withdrawalPenalty}
                 onChange={(e) => setWithdrawalPenalty(e.target.value)}
-                isInvalid={!!error && error.includes('Withdrawal Penalty Error')}
+                isInvalid={!!errors.withdrawalPenalty}
                 disabled={!isEditable}
               />
               <InputGroup.Text>
                 <FaPercent /> 
               </InputGroup.Text>
+              <Form.Control.Feedback type="invalid">
+                {errors.withdrawalPenalty}
+              </Form.Control.Feedback>
             </InputGroup>
-            <Form.Control.Feedback type="invalid">
-              {error && error.includes('Withdrawal Penalty Error') ? error.split('Withdrawal Penalty Error: ')[1] : ''}
-            </Form.Control.Feedback>
           </Form.Group>
+
           <Form.Group controlId="formLatePenalty">
             <Form.Label>Late Penalty</Form.Label>
             <InputGroup>
@@ -89,17 +97,19 @@ const InsuranceSettingForm = ({ show, handleClose, handleSave, initialClaimDeduc
                 placeholder="Enter late penalty"
                 value={latePenalty}
                 onChange={(e) => setLatePenalty(e.target.value)}
-                isInvalid={!!error && error.includes('Late Penalty Error')}
+                isInvalid={!!errors.latePenalty}
                 disabled={!isEditable}
               />
               <InputGroup.Text>
                 <FaPercent /> 
               </InputGroup.Text>
+              <Form.Control.Feedback type="invalid">
+                {errors.latePenalty}
+              </Form.Control.Feedback>
             </InputGroup>
-            <Form.Control.Feedback type="invalid">
-              {error && error.includes('Late Penalty Error') ? error.split('Late Penalty Error: ')[1] : ''}
-            </Form.Control.Feedback>
           </Form.Group>
+
+          {/* Buttons */}
           <div className="d-flex justify-content-end mt-3">
             {isEditable ? (
               <>

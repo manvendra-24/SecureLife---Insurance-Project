@@ -95,11 +95,11 @@ public class CustomerService implements ICustomerService {
         }
 
         if (userRepository.existsByUsername(registerDto.getUsername())) {
-            throw new ApiException("Username already exists!" + registerDto.getUsername());
+            throw new ApiException("Username already exists! " + registerDto.getUsername());
         }
 
         if (userRepository.existsByEmail(registerDto.getEmail())) {
-            throw new ApiException("Email already exists!" + registerDto.getEmail());
+            throw new ApiException("Email already exists! " + registerDto.getEmail());
         }
 
         User user = new User();

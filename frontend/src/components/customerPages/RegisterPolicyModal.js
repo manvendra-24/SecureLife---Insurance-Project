@@ -6,7 +6,7 @@ import { successToast, errorToast } from '../../sharedComponents/MyToast';
 import { isAlphaNumNoSpace} from '../../utils/helpers/Validation';
 
 
-const RegisterPolicyModal = ({ show, handleClose, planId, minTerm, maxTerm, minAge, maxAge, minInvestment, maxInvestment, customerAge, handleSuccess }) => {
+const RegisterPolicyModal = ({ show, handleClose, planId, minTerm, maxTerm, minAge, maxAge, minInvestment, maxInvestment, customerAge}) => {
   const [policyTerm, setPolicyTerm] = useState('');
   const [totalInvestmentAmount, setTotalInvestmentAmount] = useState('');
   const [paymentInterval, setPaymentInterval] = useState('Quarterly');
@@ -58,20 +58,18 @@ const RegisterPolicyModal = ({ show, handleClose, planId, minTerm, maxTerm, minA
     };
 
     try {
-      
       await registerPolicy(policyRequest);
-      setLoading(false);
-      handleClose(); 
-      handleSuccess(); 
-      
+      successToast("Policy registered successfully");
+      setTimeout(()=>{
+        setLoading(false);
+        handleClose(); 
+      }, 500)      
     } catch (error) {
-
-      setLoading(false); 
-      console.log(error.specificMessage);
-      handleClose(); 
-       errorToast(error.specificMessage);
-       
-   
+      errorToast(error.specificMessage);
+      setTimeout(()=>{
+        setLoading(false); 
+        handleClose(); 
+      },2000);
     }
   };
 

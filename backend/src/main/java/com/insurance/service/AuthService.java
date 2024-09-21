@@ -145,7 +145,13 @@ public class AuthService implements IAuthService {
             customerRepository.save(customer);
             logger.info("Customer profile updated successfully for username: {}", username);
         }
-      
+        if (userRepository.existsByUsername(profileRequest.getUsername()) && !user.getUsername().equals(profileRequest.getUsername())) {
+            throw new ApiException("Username already exists!");
+        }
+
+        if (userRepository.existsByEmail(profileRequest.getEmail()) && !user.getEmail().equals(profileRequest.getEmail())) {
+            throw new ApiException("Email already exists!");
+        }
         user.setUsername(profileRequest.getUsername());
         user.setEmail(profileRequest.getEmail());
         userRepository.save(user);
@@ -154,8 +160,11 @@ public class AuthService implements IAuthService {
                            "Your profile has been successfully updated. If you did not make these changes, please contact our support team immediately.\n\n" +
                            "Best Regards,\n" +
                            "SecureLife Insurance Team";
-
-        emailService.sendEmail(user.getEmail(), subject, emailBody);
+        try {
+            emailService.sendEmail(user.getEmail(), subject, emailBody);
+        } catch (MailAuthenticationException exc) {
+            logger.error("Failed to send email to {}: {}", user.getEmail(), exc.getMessage());
+        } 
         
       
         logger.info("Profile updated successfully for user: {}", username);

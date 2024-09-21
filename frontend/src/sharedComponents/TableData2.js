@@ -16,7 +16,15 @@ const TableData = ({ data, status, activateRow, deactivateRow, getInsideData, up
     }
 
     const headers = Object.keys(data[0]).filter(header => header !== 'active');
-    const filteredHeaders = status === 'Client' ? headers.filter(header => header !== 'agent') : headers;
+    const filteredHeaders = headers.filter(header => {
+        if (status === 'Client') {
+          return header !== 'agent';
+        } else if (status === 'Scheme') {
+          return header !== 'description';
+        } 
+        return true;
+      });
+          
 
 
     return (

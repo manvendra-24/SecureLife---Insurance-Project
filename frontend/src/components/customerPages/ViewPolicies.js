@@ -32,7 +32,9 @@ const ViewPolicyTable = () => {
   const [selectedPolicyId, setSelectedPolicyId] = useState(null); 
 
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);  
-  const [selectedPolicyName, setSelectedPolicyName] = useState(null);  
+  const [selectedPolicyName, setSelectedPolicyName] = useState(null); 
+  const [selectedOption, setSelectedOption] = useState('Sort By');
+
 
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -204,7 +206,7 @@ const ViewPolicyTable = () => {
 
   const sortOptions = [
     { label: 'Policy ID', value: 'policyId' },
-    { label: 'Policy Name', value: 'policyName' },
+    { label: 'Name', value: 'policyName' },
   ];
 
   return (
@@ -219,9 +221,9 @@ const ViewPolicyTable = () => {
         </Row>
           <Row className="m-5">
             <Col md={1}>
-              <DropdownButton title={sortBy ? sortBy : "Sort By"} variant="outline-secondary">
+              <DropdownButton title={sortBy ? selectedOption : "Sort By"} variant="outline-secondary">
                 {sortOptions.map(option => (
-                  <Dropdown.Item key={option.value} onClick={() => handleSortChange(option.value)}>
+                  <Dropdown.Item key={option.label} onClick={() => {setSelectedOption(option.label);handleSortChange(option.value);}}>
                     {option.label}
                   </Dropdown.Item>
                 ))}

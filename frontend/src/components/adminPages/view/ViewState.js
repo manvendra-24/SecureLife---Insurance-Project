@@ -116,7 +116,7 @@ const ViewState = () => {
         fetchData();
       },1000);
     } catch (error) {
-      showToast('Error in deactivating state', 'error');
+      showToast('Cities are present in this state', 'error');
     }
   };
 

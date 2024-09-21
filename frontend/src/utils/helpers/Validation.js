@@ -66,7 +66,7 @@ export const onlyPositive = (value) => {
 
   export const greaterThan = (value1, value2) => {
     if (value1 > value2) {
-      return "Correct minimum and maximum values";
+      return value2 + " should be greater than " + value1;
     }
     return undefined;
   };

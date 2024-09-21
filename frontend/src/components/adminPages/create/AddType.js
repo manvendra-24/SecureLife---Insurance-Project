@@ -54,7 +54,9 @@ const AddInsuranceTypeForm = () => {
       try {
         await addInsuranceType({ name, active });
         showToast('Insurance type added successfully', 'success');
-        navigate('/SecureLife.com/admin/types');
+        setTimeout(()=>{
+          navigate('/SecureLife.com/admin/types');
+        },500);
       } catch (error) {
         showToast('Failed to add insurance type. Please try again.', 'error');
       }

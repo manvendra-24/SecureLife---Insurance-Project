@@ -100,6 +100,10 @@ public class InsuranceTypeService implements IInusranceService {
                 throw new ApiException("Type is already active");
             } else {
                 insuranceType.setActive(true);
+                for(InsuranceScheme scheme:insuranceType.getInsuranceSchemes()) {
+                	scheme.setActive(true);
+                	scheme.getInsurancePlan().setActive(true);
+                }
                 insuranceTypeRepository.save(insuranceType);
 
                 logger.info("Insurance Type activated successfully with ID: {}", id);

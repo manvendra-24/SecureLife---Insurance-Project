@@ -120,7 +120,7 @@ const ViewCity = () => {
       setTimeout(()=>{
         fetchData();
       },1000);    } catch (error) {
-      showToast('Error in deactivating city', 'error');
+      showToast('Users are present in this city', 'error');
     }
   };
 

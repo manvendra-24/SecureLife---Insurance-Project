@@ -206,14 +206,15 @@ const ViewAgent = () => {
   const handleCloseModal = () => setShowModal(false);
 
   const handleSaveAgent = async (formData) => {
-    console.log(formData);
     setLoading(true);
     try {
       await registerAgent(formData);
       setLoading(false);
       showToast('Agent registered successfully', 'success');
-      handleCloseModal();
-      fetchData();
+      setTimeout(()=>{
+        handleCloseModal();
+        fetchData();
+      },500)  
     } catch (error) {
       setLoading(false);
       showToast('Error registering agent', 'error');

@@ -92,6 +92,7 @@ public class Mappers {
 		    response.setWithdrawalPenaltyForAgent(insuranceScheme.getWithdrawalPenalty());
 		    response.setInsuranceType(insuranceScheme.getInsuranceType().getName());
 		    response.setActive(insuranceScheme.isActive());
+		    response.setDescription(insuranceScheme.getDescription());
 		    return response;
 		}
 

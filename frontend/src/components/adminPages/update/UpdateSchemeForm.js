@@ -6,6 +6,7 @@ import { successToast, errorToast } from '../../../sharedComponents/MyToast';
 import Header from '../../layout/Header';
 import Footer from '../../layout/Footer';
 import Loader from '../../../sharedComponents/Loader';
+import { ToastContainer } from 'react-toastify';
 
 const UpdateInsuranceSchemeForm = () => {
     const { schemeId } = useParams();
@@ -80,7 +81,6 @@ const UpdateInsuranceSchemeForm = () => {
                 successToast("Insurance scheme updated successfully");
                 setTimeout(() => { navigate(-1); }, 1000);
             } catch (error) {
-                console.error('Error updating insurance scheme:', error);
                 errorToast("Failed to update the insurance scheme!");
             }
         } else {
@@ -165,6 +165,7 @@ const UpdateInsuranceSchemeForm = () => {
                 </Row>
             </Container>
             <Footer />
+            <ToastContainer/>
         </Container>
     );
 };

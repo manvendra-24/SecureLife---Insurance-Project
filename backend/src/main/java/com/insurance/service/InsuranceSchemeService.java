@@ -89,6 +89,7 @@ public class InsuranceSchemeService implements IInsuranceSchemeService {
         }
 
         insuranceScheme.setActive(true);
+        insuranceScheme.getInsurancePlan().setActive(true);    
         insuranceSchemeRepository.save(insuranceScheme);
 
         logger.info("Insurance scheme activated successfully with ID: {}", id);
