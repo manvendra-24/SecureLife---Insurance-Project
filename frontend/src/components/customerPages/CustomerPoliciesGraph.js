@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Carousel, Card } from 'react-bootstrap';
+import { Carousel, Card, Spinner,Container } from 'react-bootstrap';
 import GeneralChart from '../../sharedComponents/GeneralChart';
 import { getMyPolicies } from '../../services/CustomerService';
 import { FaExclamationTriangle } from 'react-icons/fa';
@@ -34,7 +34,10 @@ const CustomerPoliciesGraph = () => {
     fetchData();
   }, [fetchData]);
 
-  if (loading) return <Loader/>;
+  if (loading) return 
+  <Container fluid className="py-5 flex-grow-1 d-flex justify-content-center align-items-center" style={{backgroundColor:'rgba(230, 242, 255, 0.5)'}}>
+    <Spinner animation="border" />
+  </Container>;
 
   const getPaymentIntervalValue = (interval) => {
     switch (interval?.toLowerCase()) {
