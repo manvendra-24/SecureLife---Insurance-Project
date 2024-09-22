@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Card } from 'react-bootstrap';
 import { FaFileAlt, FaQuestionCircle, FaUpload, FaShieldAlt, FaClipboardList } from 'react-icons/fa';
 
 import Header from '../layout/Header';
@@ -14,6 +14,7 @@ import DocumentUploadModal from './DocumentUploadModal';
 import { successToast, errorToast } from '../../sharedComponents/MyToast';
 import { verifyCustomer, getProfile } from '../../services/AuthService';
 import InsuranceTypesModal from './InsuranceTypeModal';
+import CustomerPoliciesGraph from './CustomerPoliciesGraph';
 
 
 const CustomerDashboard = () => {
@@ -103,12 +104,48 @@ const CustomerDashboard = () => {
       <Header />
       <Container fluid className="py-5 px-5" style={{ backgroundColor: 'rgba(230, 242, 255, 0.5)' }}>
         <Row className="px-5 mb-5">
-          <Col xs={12} md={12}>
-            <div className="text-left">
-              <h1 className="display-4">Welcome, {username}!</h1>
-              <p className="lead">Your dashboard for managing your profile and services.</p>
-            </div>
-          </Col>
+        <Col xs={12} md={6}> 
+
+<Row className="px-0 m-5">
+  <Col md={12}>
+    <div className="text-center" style={{marginTop:'60px', marginBottom:'45px'}}>
+        <h1 className="display-4">Welcome, {username}!</h1>
+        <p className="lead">Your dashboard for managing the system.</p>
+    </div>
+  </Col>
+</Row>
+
+
+<Row className="px-0">
+  <Col md={6} className="text-center">
+  <DashboardCard
+              title="Upload Documents"
+              text="Upload important documents"
+              handleButton={handleShowUploadModal}
+              buttonText="Upload Documents"
+            />
+  </Col>
+  <Col md={6} className="text-center">
+  <DashboardCard
+              title="Write Query"
+              text="Submit a query for support"
+              handleButton={handleWriteQuery}
+              buttonText="Write Query"
+            />
+  </Col>
+</Row>
+</Col>
+          <Col xs={12} md={6} className="d-flex align-items-center justify-content-center px-3">
+        <Card className="w-100 h-100" style={{ backgroundColor: 'rgba(230, 242, 255, 0.5)' }}>
+          <Row>
+            <Col md={12}>
+              <Card.Body>
+              <CustomerPoliciesGraph />
+              </Card.Body>
+            </Col>
+          </Row>
+        </Card>
+      </Col>
         </Row>
         <Row className="px-5">
         <Col md={4}>
@@ -142,22 +179,10 @@ const CustomerDashboard = () => {
         </Row>
         <Row className="mt-3 px-5">
           <Col md={4}>
-            <DashboardCard
-              icon={<FaUpload />} 
-              title="Upload Documents"
-              text="Upload important documents"
-              handleButton={handleShowUploadModal}
-              buttonText="Upload Documents"
-            />
+            
           </Col>
           <Col md={4}>
-            <DashboardCard
-              icon={<FaQuestionCircle />}
-              title="Write Query"
-              text="Submit a query for support"
-              handleButton={handleWriteQuery}
-              buttonText="Write Query"
-            />
+            
           </Col>
         </Row>
       </Container>

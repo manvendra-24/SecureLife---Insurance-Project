@@ -40,7 +40,7 @@ public class CustomerController {
 
 
   @PostMapping("/customer/register")
-  @Operation(summary = "Register Customer -- BY AGENT")
+  @Operation(summary = "Register Customer -- BY All")
   public ResponseEntity<String> registerCustomer(HttpServletRequest request, @Valid @RequestBody CustomerRegisterRequest registerDto) {
       String authorizationHeader = request.getHeader("Authorization");
       String token = "";
@@ -94,6 +94,7 @@ public class CustomerController {
   }
   @PutMapping("/customer/{id}/approve")
   @Operation(summary = "Approve customer -- BY EMPLOYEE")
+  @PreAuthorize("hasRole('EMPLOYEE')")
   public ResponseEntity<String>verifyCustomer(HttpServletRequest request,@PathVariable("id")String id) throws AccessDeniedException{
   	  String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -108,6 +109,7 @@ public class CustomerController {
   
   @PutMapping("/customer/{id}/reject")
   @Operation(summary = "Reject customer -- BY EMPLOYEE")
+  @PreAuthorize("hasRole('EMPLOYEE')")
   public ResponseEntity<String>verifyCustomerReject(HttpServletRequest request,@PathVariable("id")String id) throws AccessDeniedException{
   	  String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {

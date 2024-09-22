@@ -3,6 +3,7 @@ package com.insurance.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,9 +30,9 @@ public class InsuranceSchemeController {
 	@Autowired
 	IInsuranceSchemeService service;
 	
-	//get all insurance scheme
     @GetMapping("/schemes")
     @Operation(summary= "Get all Insurance Schemes -- For ADMIN")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
     public ResponseEntity<PagedResponse<InsuranceSchemeResponse>> getAllInsuranceSchemes(
       @RequestParam(name = "page", defaultValue = "0") int page,
       @RequestParam(name = "size", defaultValue = "5") int size,
@@ -43,33 +44,33 @@ public class InsuranceSchemeController {
       return new ResponseEntity<PagedResponse<InsuranceSchemeResponse>>(service.getAllInsuranceSchemes(page, size, sortBy, direction, searchQuery),HttpStatus.OK);
     }
     
-    //create insurance scheme
     @PostMapping("/type/{typeId}/schemes")
     @Operation(summary= "Create Insurance Scheme -- For ADMIN")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> createInsuranceSchemes(@PathVariable String typeId, @RequestBody InsuranceSchemeRequest schemeRequest){
         String response = service.createInsuranceScheme(typeId, schemeRequest);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
     
-    //update insurance scheme
     @PutMapping("/scheme/{id}/update")
     @Operation(summary= "Update Insurance Scheme -- For ADMIN")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> updateInsuranceSchemes(@PathVariable String id,@RequestBody InsuranceSchemeRequest schemeRequest){
         String response = service.updateInsuranceScheme(id,schemeRequest);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
-    //activate insurance scheme
     @PutMapping("/scheme/{id}/activate")
     @Operation(summary= "Activate Insurance Scheme -- For ADMIN")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> activateInsuranceSchemes(@PathVariable String id){
         String response = service.activateInsuranceScheme(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
-    //delete insurance scheme
     @DeleteMapping("/scheme/{id}/delete")
     @Operation(summary= "Delete Insurance Scheme -- For ADMIN")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteInsuranceSchemes(@PathVariable String id){
         String response = service.deleteInsuranceScheme(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -78,6 +79,7 @@ public class InsuranceSchemeController {
     
     @GetMapping("/type/{typeId}/schemes")
     @Operation(summary= "Get Insurance Schemes of Type -- For ADMIN")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
     public ResponseEntity<PagedResponse<InsuranceSchemeResponse>> getInsuranceSchemesByType(
     		@PathVariable String typeId,
       @RequestParam(name = "page", defaultValue = "0") int page,
@@ -90,6 +92,7 @@ public class InsuranceSchemeController {
     }
     
     @GetMapping("/scheme/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<InsuranceSchemeResponse>getInsuranceSchemeById(@PathVariable("id") String id ){
       InsuranceSchemeResponse response =service.getInsuranceSchemeById(id);
       return new ResponseEntity<InsuranceSchemeResponse>(response, HttpStatus.OK);

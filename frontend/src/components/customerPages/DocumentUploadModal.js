@@ -6,7 +6,6 @@ import { showToast } from '../../sharedComponents/NewToast';
 const documentTypes = [
   { value: 'AADHAR', label: 'Aadhar' },
   { value: 'PAN_CARD', label: 'PAN Card' },
-  // { value: 'CLAIM_DOCUMENT', label: 'Claim Document' },
   { value: 'HEALTH_CERTIFICATE', label: 'Health Certificate' },
 ];
 

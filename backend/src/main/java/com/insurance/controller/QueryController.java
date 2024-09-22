@@ -33,6 +33,7 @@ public class QueryController {
 	//create query
 	@PostMapping("/queries/ask")
     @Operation(summary = "Ask Query -- BY CUSTOMER")
+    @PreAuthorize("hasRole('CUSTOMER')")
 	public ResponseEntity<String>addQuery(HttpServletRequest request,@RequestBody CustomerQueryRequest queryRequest) throws AccessDeniedException{
 		 String authorizationHeader = request.getHeader("Authorization");
          if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -49,6 +50,7 @@ public class QueryController {
        	//update response
          @PostMapping("/query/{id}/response")
          @Operation(summary = "Update Response for a query -- BY EMPLOYEE")
+         @PreAuthorize("hasRole('EMPLOYEE')")
          public ResponseEntity<String>addResponseQuery(HttpServletRequest request,@RequestBody EmployeeQueryRequest queryRequest,@PathVariable("id")Long id) throws AccessDeniedException{
     		 String authorizationHeader = request.getHeader("Authorization");
              if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {

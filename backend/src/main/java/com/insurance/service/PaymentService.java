@@ -121,7 +121,7 @@ public class PaymentService implements IPaymentService {
 
             transactionRepository.save(transaction);
 
-            policy.setTotalAmountPaid(policy.getTotalAmountPaid() + paymentRequestDto.getAmount());
+            policy.setTotalAmountPaid(policy.getTotalAmountPaid() + policy.getInstallmentAmount());
             
             policy.setNextPaymentDate(calculateNextPaymentDate(policy));
             policyRepository.save(policy);

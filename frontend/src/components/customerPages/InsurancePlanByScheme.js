@@ -80,7 +80,7 @@ const InsurancePlanByScheme = () => {
                   <Card.Text><strong>Maximum Age:</strong> {plan.maximumAge} years</Card.Text>
                   <Card.Text><strong>Minimum Investment Amount:</strong> ₹{plan.minimumInvestmentAmount}</Card.Text>
                   <Card.Text><strong>Maximum Investment Amount:</strong> ₹{plan.maximumInvestmentAmount}</Card.Text>
-                  <Card.Text><strong>Profit Ratio:</strong> {plan.profitRatio}%</Card.Text>
+                  <Card.Text><strong>Profit Ratio:</strong> {plan.profitRatio}</Card.Text>
                   <Card.Text><strong>Active Status:</strong> {plan.active ? 'Active' : 'Inactive'}</Card.Text>
                   <Button variant="primary" onClick={handleOpenModal}>
                     Register Policy

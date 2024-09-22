@@ -12,6 +12,7 @@ public class PolicyResponse {
 	
     private String policyId;
     
+    private String policyName;
 
     private LocalDate startDate;
     
@@ -24,5 +25,8 @@ public class PolicyResponse {
     private PaymentInterval paymentInterval;
             
     private PolicyStatus status;
+    
+    private double totalAmountPaid;
+    
 	
 }

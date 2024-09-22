@@ -28,6 +28,7 @@ public class PolicyController {
     
     @PostMapping("/policies/register")
     @Operation(summary = "Register policy -- BY CUSTOMER")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<String> createPolicy(HttpServletRequest request, @Valid @RequestBody PolicyRequest policyRequest) {
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -40,6 +41,7 @@ public class PolicyController {
 
     @GetMapping("/policies")
     @Operation(summary = "Get all Policies -- BY EMPLOYEE & ADMIN")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('EMPLOYEE')")
     public ResponseEntity<PagedResponse<PolicyResponse>> getAllPolicies(
     		HttpServletRequest request,
             @RequestParam(name = "page", defaultValue = "0") int page,
@@ -77,6 +79,7 @@ public class PolicyController {
     
     @GetMapping("/agent/{agentId}/commissions")
     @Operation(summary = "Get Policies by Agent ID -- BY EMPLOYEE & ADMIN")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('EMPLOYEE')")
     public ResponseEntity<PagedResponse<CommissionResponse>> getCommissionByAgentId(
             HttpServletRequest request,
             @PathVariable String agentId,
@@ -115,6 +118,7 @@ public class PolicyController {
 
     @GetMapping("/mypolicies")
     @Operation(summary = "Get My Policies -- BY CUSTOMER")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<PagedResponse<PolicyResponse>> getMyPolicies(
             HttpServletRequest request,
             @RequestParam(name = "page", defaultValue = "0") int page,

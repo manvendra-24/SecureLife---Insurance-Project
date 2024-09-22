@@ -35,6 +35,7 @@ public class WithdrawalController {
 	//withdrawal request
 	@PostMapping("/policy/{policy_id}/withdrawal")
 	 @Operation(summary= "Request withdrawal -- BY CUSTOMER")
+    @PreAuthorize("hasRole('CUSTOMER')")
 	public ResponseEntity<String> withdrawalRequest(HttpServletRequest request, @PathVariable("policy_id") String policy_id) {
 	    	String authorizationHeader = request.getHeader("Authorization");
 	      if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -51,6 +52,7 @@ public class WithdrawalController {
 	// Approve withdrawal
     @PostMapping("/withdrawals/{withdrawal_id}/approve")
     @Operation(summary= "Approve withdrawal -- BY ADMIN")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> approveWithdrawal(HttpServletRequest request,@PathVariable long withdrawal_id) {
     	String authorizationHeader = request.getHeader("Authorization");
 	      if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -64,6 +66,7 @@ public class WithdrawalController {
     // Reject withdrawal
     @PostMapping("/withdrawals/{withdrawal_id}/reject")
     @Operation(summary= "Reject withdrawal -- BY ADMIN")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> rejectWithdrawal(HttpServletRequest request,@PathVariable long withdrawal_id) {
     	String authorizationHeader = request.getHeader("Authorization");
 	      if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {

@@ -72,6 +72,7 @@ public class InsuranceTypeController {
     //get all insurance types
     @GetMapping("/types")
     @Operation(summary= "Get all Insurance Types -- For ADMIN")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
     public ResponseEntity<PagedResponse<InsuranceTypeResponse>> getAllTypes(
       @RequestParam(name = "page", defaultValue = "0") int page,
       @RequestParam(name = "size", defaultValue = "5") int size,

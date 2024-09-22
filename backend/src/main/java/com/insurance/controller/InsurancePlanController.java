@@ -3,6 +3,7 @@ package com.insurance.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +32,7 @@ public class InsurancePlanController {
 	//get all insurance plans
     @GetMapping("/plans")
     @Operation(summary= "Get all Insurance Plans -- For ADMIN")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PagedResponse<InsurancePlanResponse>> getAllInsurancePlans(
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "5") int size,
@@ -44,6 +46,7 @@ public class InsurancePlanController {
     //get insurance plan
     @GetMapping("/scheme/{schemeId}/plan")
     @Operation(summary= "Get Insurance Plans -- For ADMIN")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
     public ResponseEntity<InsurancePlanResponse> createInsurancePlan(@PathVariable String schemeId) {
         InsurancePlanResponse response = service.getInsurancePlan(schemeId);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -52,6 +55,7 @@ public class InsurancePlanController {
     //create insurance plan
     @PostMapping("/scheme/{schemeId}/plan")
     @Operation(summary= "Create Insurance Plans -- For ADMIN")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> createInsurancePlan(@PathVariable String schemeId,@RequestBody InsurancePlanRequest planRequest) {
         String response = service.createInsurancePlan(schemeId, planRequest);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -68,6 +72,7 @@ public class InsurancePlanController {
     //activate insurance plan
     @PutMapping("/plan/{id}/activate")
     @Operation(summary= "Activate Insurance Plans -- For ADMIN")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> activateInsurancePlan(@PathVariable String id) {
         String response = service.activateInsurancePlan(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -76,6 +81,7 @@ public class InsurancePlanController {
     //delete insurance plan
     @DeleteMapping("/plan/{id}/delete")
     @Operation(summary= "Delete Insurance Pla -- For ADMIN")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteInsurancePlan(@PathVariable String id) {
         String response = service.deleteInsurancePlan(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -83,6 +89,7 @@ public class InsurancePlanController {
     
     @GetMapping("/schemes/{schemeId}/plans")
     @Operation(summary = "Get Insurance Plans by Scheme ID -- For ADMIN")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
     public ResponseEntity<PagedResponse<InsurancePlanResponse>> getInsurancePlansBySchemeId(
             @PathVariable("schemeId") String schemeId,
             @RequestParam(name = "page", defaultValue = "0") int page,

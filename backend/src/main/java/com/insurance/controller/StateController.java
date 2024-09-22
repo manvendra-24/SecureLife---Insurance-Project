@@ -170,7 +170,7 @@ public class StateController {
     
     @GetMapping("/allstates")
     @Operation(summary = "Get all States -- For ALL")
-    public ResponseEntity<List<StateResponse>> getAllCities(){
+    public ResponseEntity<List<StateResponse>> getAllStates(){
     	return new ResponseEntity<List<StateResponse>>(service.getAllStates(), HttpStatus.OK);
     }
     

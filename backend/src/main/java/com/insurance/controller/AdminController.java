@@ -101,7 +101,7 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary= "Update insurance setting -- BY ADMIN")
     public ResponseEntity<String> createInsuranceSetting(@RequestBody InsuranceSettingRequest insuranceSettingRequestDto){
-      return new ResponseEntity<String>(service.createInsuranceSetting(insuranceSettingRequestDto),HttpStatus.CREATED);
+      return new ResponseEntity<>(service.createInsuranceSetting(insuranceSettingRequestDto),HttpStatus.CREATED);
     }
     
     @GetMapping("/tax-setting")
